@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gui\Component.cs" />
+    <Compile Include="Gui\Screen.cs" />
     <Compile Include="MyNote.cs">
       <SubType>Form</SubType>
     </Compile>

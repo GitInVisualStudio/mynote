@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,9 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Math\CRandom.cs" />
-    <Compile Include="Math\MathUtils.cs" />
-    <Compile Include="Math\Vector.cs" />
+    <Compile Include="Canvasses\Canvas.cs" />
+    <Compile Include="Canvasses\Excercise.cs" />
+    <Compile Include="Canvasses\IManager.cs" />
+    <Compile Include="Canvasses\Note.cs" />
+    <Compile Include="Classes\Course.cs" />
+    <Compile Include="Utils\Math\CRandom.cs" />
+    <Compile Include="Utils\Math\MathUtils.cs" />
+    <Compile Include="Utils\Math\Vector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

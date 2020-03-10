@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace MyNote
 {
-    public partial class Form1 : Form
+    public partial class MyNote : Form
     {
-        public Form1()
+        public MyNote()
         {
             InitializeComponent();
         }

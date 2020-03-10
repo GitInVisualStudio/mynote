@@ -1,6 +1,6 @@
 ﻿namespace MyNote
 {
-    partial class Form1
+    partial class MyNote
     {
         /// <summary>
         /// Erforderliche Designervariable.

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyNote.Gui
 {
-    public class Component
+    public abstract class Component
     {
         private Vector location;
         private Vector size;
@@ -65,9 +65,8 @@ namespace MyNote.Gui
             Size = size;
         }
 
-        public virtual void OnRender()
-        {
+        public abstract void Init();
 
-        }
+        public abstract void OnRender();
     }
 }

@@ -14,6 +14,7 @@ namespace MyNoteBase.Classes
         private Color color;
         private List<Canvas> canvasses;
         private Icon icon;
+        private Semester semester;
 
         public string Name
         {
@@ -67,11 +68,14 @@ namespace MyNoteBase.Classes
             }
         }
 
+        public Semester Semester { get => semester; set => semester = value; }
+
         public Course(string name, Color color, Icon icon)
         {
             this.name = name;
             this.color = color;
             this.icon = icon;
+            this.canvasses = new List<Canvas>();
         }
     }
 }

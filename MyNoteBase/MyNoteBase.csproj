@@ -43,14 +43,22 @@
   <ItemGroup>
     <Compile Include="Canvasses\Canvas.cs" />
     <Compile Include="Canvasses\Excercise.cs" />
-    <Compile Include="Canvasses\IManager.cs" />
+    <Compile Include="Canvasses\VocabularyListing.cs" />
+    <Compile Include="Canvasses\VocabularyPair.cs" />
+    <Compile Include="Classes\Test.cs" />
+    <Compile Include="Classes\TestType.cs" />
+    <Compile Include="Utils\Exceptions\ImageListsNotEqualSizeException.cs" />
+    <Compile Include="Utils\Graphic\IManager.cs" />
     <Compile Include="Canvasses\Note.cs" />
     <Compile Include="Classes\Course.cs" />
+    <Compile Include="Classes\Semester.cs" />
+    <Compile Include="Utils\Graphic\Icon.cs" />
     <Compile Include="Utils\Math\CRandom.cs" />
     <Compile Include="Utils\Math\MathUtils.cs" />
     <Compile Include="Utils\Math\Vector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

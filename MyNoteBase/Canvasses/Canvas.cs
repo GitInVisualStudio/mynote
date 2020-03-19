@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 namespace MyNoteBase.Canvasses
 {
     [Serializable]
-    public class Canvas
+    public abstract class Canvas
     {
         private Image pixels => Manager.GetImage();
         private IManager manager;

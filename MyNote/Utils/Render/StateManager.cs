@@ -75,13 +75,13 @@ namespace MyNote.Utils.Render
             g.DrawImage(img, x, y);
         }
 
-        public static void DrawImage(Bitmap img, float x, float y, float width, float height, float opacity)
+        public static void DrawImage(Bitmap img, float x, float y, float width, float height, float opacity = 1.0f)
         {
             ColorMatrix matrix = new ColorMatrix();
             matrix.Matrix33 = opacity;
             ImageAttributes attributes = new ImageAttributes();
             attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
-            g.DrawImage(img, new System.Drawing.Rectangle(0, 0, (int)width, (int)height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, attributes);
+            g.DrawImage(img, new Rectangle(0, 0, (int)width, (int)height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, attributes);
         }
 
         public static void DrawImage(Bitmap img, Vector pos) => DrawImage(img, pos.X, pos.Y);

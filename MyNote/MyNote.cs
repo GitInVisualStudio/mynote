@@ -1,3 +1,6 @@
+﻿using MyNote.Utils.IO;
+using MyNoteBase.Canvasses;
+using MyNoteBase.Utils.IO;
 ﻿using MyNote.Gui;
 using MyNote.Utils;
 using System;
@@ -41,6 +44,7 @@ namespace MyNote
         public MyNote()
         {
             InitializeComponent();
+            this.ioManager = new IOManager(new SaveLoader());
         }
 
         public void Init()

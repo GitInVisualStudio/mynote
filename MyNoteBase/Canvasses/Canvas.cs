@@ -17,6 +17,7 @@ namespace MyNoteBase.Canvasses
         private DateTime dt;
         private string name;
         private Course course;
+        private string courseFilePath;
 
         [XmlIgnore]
         public IManager Manager
@@ -31,6 +32,9 @@ namespace MyNoteBase.Canvasses
                 manager = value;
             }
         }
+
+        [XmlIgnore]
+        public Course Course { get => course; set => course = value; }
 
         public DateTime Dt
         {
@@ -56,6 +60,15 @@ namespace MyNoteBase.Canvasses
             {
                 name = value;
             }
+        }
+
+        public string CourseFilePath { get => courseFilePath; set => courseFilePath = value; }
+
+        /// <summary>
+        /// Has to exist because of how the XMLSerializer works
+        /// </summary>
+        public Canvas()
+        { 
         }
 
         public Canvas(DateTime dt, string name, Course course, IManager manager)

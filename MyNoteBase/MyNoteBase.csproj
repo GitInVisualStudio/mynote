@@ -53,6 +53,8 @@
     <Compile Include="Classes\Course.cs" />
     <Compile Include="Classes\Semester.cs" />
     <Compile Include="Utils\Graphic\Icon.cs" />
+    <Compile Include="Utils\IO\IOManager.cs" />
+    <Compile Include="Utils\IO\ISaveLoader.cs" />
     <Compile Include="Utils\Math\CRandom.cs" />
     <Compile Include="Utils\Math\MathUtils.cs" />
     <Compile Include="Utils\Math\Vector.cs" />

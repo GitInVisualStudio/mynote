@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace MyNoteBase.Classes
 {
@@ -15,6 +16,7 @@ namespace MyNoteBase.Classes
         private List<Canvas> canvasses;
         private Icon icon;
         private Semester semester;
+        private string semesterFilePath;
 
         public string Name
         {
@@ -68,7 +70,17 @@ namespace MyNoteBase.Classes
             }
         }
 
+        [XmlIgnore]
         public Semester Semester { get => semester; set => semester = value; }
+        public string SemesterFilePath { get => semesterFilePath; set => semesterFilePath = value; }
+
+        /// <summary>
+        /// Has to exist because of how the XMLSerializer works
+        /// </summary>
+        public Course()
+        {
+
+        }
 
         public Course(string name, Color color, Icon icon)
         {

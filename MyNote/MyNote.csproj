@@ -59,9 +59,6 @@
     <Compile Include="Utils\IO\SaveLoader.cs" />
     <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\AnimationManager.cs" />
-    <Compile Include="Utils\Math\CRandom.cs" />
-    <Compile Include="Utils\Math\MathUtils.cs" />
-    <Compile Include="Utils\Math\Vector.cs" />
     <Compile Include="Utils\Render\RenderUtils.cs" />
     <Compile Include="Utils\Render\State.cs" />
     <Compile Include="Utils\Render\StateManager.cs" />

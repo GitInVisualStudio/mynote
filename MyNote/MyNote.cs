@@ -44,7 +44,6 @@ namespace MyNote
         public MyNote()
         {
             InitializeComponent();
-            this.ioManager = new IOManager(new SaveLoader());
         }
 
         public void Init()

@@ -12,14 +12,15 @@ namespace MyNoteBase.Canvasses
     [Serializable]
     public abstract class Canvas
     {
-        private Image pixels => Manager.GetImage();
+        [NonSerialized]
         private IManager manager;
         private DateTime dt;
         private string name;
+        [NonSerialized]
         private Course course;
         private string courseFilePath;
+        private Image pixels;
 
-        [XmlIgnore]
         public IManager Manager
         {
             get
@@ -63,13 +64,7 @@ namespace MyNoteBase.Canvasses
         }
 
         public string CourseFilePath { get => courseFilePath; set => courseFilePath = value; }
-
-        /// <summary>
-        /// Has to exist because of how the XMLSerializer works
-        /// </summary>
-        public Canvas()
-        { 
-        }
+        public Image Pixels { get => manager.GetImage(); set => manager.SetImage(value); }
 
         public Canvas(DateTime dt, string name, Course course, IManager manager)
         {
@@ -77,6 +72,17 @@ namespace MyNoteBase.Canvasses
             this.name = name;
             this.course = course;
             this.manager = manager;
+        }
+
+        public void PrepareForSerialization()
+        {
+            pixels = Pixels;
+        }
+
+        public void InitAfterDeserialization(IManager manager)
+        {
+            this.manager = manager;
+            manager.SetImage(pixels);
         }
     }
 }

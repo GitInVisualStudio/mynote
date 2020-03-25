@@ -22,15 +22,16 @@ namespace MyNoteBase.Utils.IO
             this.sl = sl;
             loadedSemesters = new Dictionary<string, Semester>();
             loadedCourses = new Dictionary<string, Course>();
-            savePath = "saves" + Path.DirectorySeparatorChar.ToString();
+            savePath = "D:\\KurzerAufenthalt\\Mynote\\saves" + Path.DirectorySeparatorChar.ToString();
         }
         
-        public Canvas LoadCanvas(string path)
+        public Canvas LoadCanvas(string path, IManager manager)
         {
             Canvas c;
             try
             {
-                c = (Canvas)sl.Load(path, typeof(Canvas));
+                c = (Canvas)sl.Load(path);
+                c.InitAfterDeserialization(manager);
             }
             catch
             {
@@ -51,7 +52,8 @@ namespace MyNoteBase.Utils.IO
             Course c;
             try
             {
-                c = (Course)sl.Load(path, typeof(Course));
+                c = (Course)sl.Load(path);
+                c.InitAfterDeserialization();
             }
             catch
             {
@@ -71,7 +73,9 @@ namespace MyNoteBase.Utils.IO
         {
             try
             {
-                return (Semester)sl.Load(path, typeof(Semester));
+                Semester s = (Semester)sl.Load(path);
+                s.InitAfterDeserialization();
+                return s;
             }
             catch
             {
@@ -83,7 +87,8 @@ namespace MyNoteBase.Utils.IO
         {
             string coursePath = SaveCourse(c.Course);
             c.CourseFilePath = coursePath;
-            string path = savePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + ".myc";
+            string fileExtension = ".my" + c.GetType().Name[0];
+            string path = savePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + fileExtension;
             sl.Save(path, c);
             return path;
         }

@@ -9,14 +9,17 @@ using System.Xml.Serialization;
 
 namespace MyNoteBase.Classes
 {
+    [Serializable]
     public class Course
     {
         private string name;
         private Color color;
         private List<Canvas> canvasses;
-        private Icon icon;
+        private Utils.Graphic.Icon icon;
+        [NonSerialized]
         private Semester semester;
         private string semesterFilePath;
+        private List<Test> tests;
 
         public string Name
         {
@@ -57,7 +60,7 @@ namespace MyNoteBase.Classes
             }
         }
 
-        public Icon Icon
+        public Utils.Graphic.Icon Icon
         {
             get
             {
@@ -70,24 +73,22 @@ namespace MyNoteBase.Classes
             }
         }
 
-        [XmlIgnore]
         public Semester Semester { get => semester; set => semester = value; }
         public string SemesterFilePath { get => semesterFilePath; set => semesterFilePath = value; }
+        public List<Test> Tests { get => tests; set => tests = value; }
 
-        /// <summary>
-        /// Has to exist because of how the XMLSerializer works
-        /// </summary>
-        public Course()
-        {
-
-        }
-
-        public Course(string name, Color color, Icon icon)
+        public Course(string name, Color color, Utils.Graphic.Icon icon, Semester s)
         {
             this.name = name;
             this.color = color;
             this.icon = icon;
             this.canvasses = new List<Canvas>();
+            this.semester = s;
+        }
+
+        public void InitAfterDeserialization()
+        {
+            canvasses = new List<Canvas>();
         }
     }
 }

@@ -9,6 +9,7 @@ using MyNoteBase.Utils.Exceptions;
 
 namespace MyNoteBase.Canvasses
 {
+    [Serializable]
     public class VocabularyListing : Canvas
     {
         private List<VocabularyPair> pairs;

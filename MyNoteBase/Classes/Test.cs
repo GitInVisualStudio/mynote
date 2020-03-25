@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyNoteBase.Classes
 {
+    [Serializable]
     public class Test
     {
         private DateTime date;
@@ -24,6 +25,7 @@ namespace MyNoteBase.Classes
             this.course = course;
             this.topic = topic;
             this.type = type;
+            course.Tests.Add(this);
         }
     }
 }

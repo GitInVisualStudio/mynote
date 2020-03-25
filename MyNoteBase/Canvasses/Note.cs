@@ -7,6 +7,7 @@ using MyNoteBase.Classes;
 
 namespace MyNoteBase.Canvasses
 {
+    [Serializable]
     public class Note : Canvas
     {
         public Note(DateTime dt, string name, Course course, IManager manager) : base(dt, name, course, manager)

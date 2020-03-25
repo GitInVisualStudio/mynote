@@ -10,5 +10,6 @@ namespace MyNoteBase.Canvasses
     public interface IManager
     {
         Image GetImage();
+        void SetImage(Image img);
     }
 }

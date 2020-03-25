@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MyNoteBase.Classes;
+using MyNote.Utils.Render;
 
 namespace MyNote
 {
@@ -44,6 +46,11 @@ namespace MyNote
         public MyNote()
         {
             InitializeComponent();
+            //Semester s = new Semester("200325_test_semester");
+            //Course k = new Course("200325_test_course", Color.White, new MyNoteBase.Utils.Graphic.Icon("icon", new Bitmap(10, 10)), s);
+            //Canvas c = new Excercise(DateTime.Now, "200325_test", k, new TestIManager());
+            //new IOManager(new SaveLoader()).SaveCanvas(c);
+            Canvas c = new IOManager(new SaveLoader()).LoadCanvas("D:\\KurzerAufenthalt\\Mynote\\saves\\200325_test_semester\\200325_test_course\\200325_test.myE", new TestIManager());
         }
 
         public void Init()

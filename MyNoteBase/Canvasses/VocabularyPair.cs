@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyNoteBase.Canvasses
 {
+    [Serializable]
     public class VocabularyPair
     {
         private Image one;

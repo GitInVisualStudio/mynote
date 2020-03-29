@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace MyNote.Gui
 {
-    public class GuiScreen : Component
+    public class GuiScreen : GuiComponent
     {
-        private List<Component> components;
+        private List<GuiComponent> components;
         private Animation<float> animation = Animation<float>.GetDefaultAnimation();
         private bool opend;
 
-        public List<Component> Components
+        public List<GuiComponent> Components
         {
             get
             {
@@ -42,6 +42,7 @@ namespace MyNote.Gui
 
         public GuiScreen(Vector size) : base(default(Vector), size)
         {
+            components = new List<GuiComponent>();
             OnResize += Screen_OnResize;
             OnClick += Screen_OnClick;
             OnMove += Screen_OnMove;
@@ -57,27 +58,47 @@ namespace MyNote.Gui
 
         private void Screen_OnRelease(object sender, Vector e)
         {
-            components.ForEach(x => x.Component_OnRelease(e));
+            components.ForEach(x =>
+            {
+                if (x.OnHover(e))
+                    x.Component_OnRelease(e);
+            });
         }
 
         private void Screen_OnMove(object sender, Vector e)
         {
-            components.ForEach(x => x.Component_OnMove(e));
-        }
-
-        private void Screen_OnKeyRelease(object sender, char e)
-        {
-            components.ForEach(x => x.Component_OnKeyRelease(e));
-        }
-
-        private void Screen_OnKeyPress(object sender, char e)
-        {
-            components.ForEach(x => x.Component_OnKeyPress(e));
+            components.ForEach(x =>
+            {
+                if (x.OnHover(e))
+                    x.Component_OnMove(e);
+            });
         }
 
         private void Screen_OnClick(object sender, Vector e)
         {
-            components.ForEach(x => x.Component_OnClick(e));
+            components.ForEach(x =>
+            {
+                if (x.OnHover(e))
+                    x.Component_OnClick(e);
+            });
+        }
+
+        private void Screen_OnKeyRelease(object sender, char e)
+        {
+            components.ForEach(x =>
+            {
+                if (x.Selected)
+                    x.Component_OnKeyRelease(e);
+            });
+        }
+
+        private void Screen_OnKeyPress(object sender, char e)
+        {
+            components.ForEach(x=>
+            {
+                if (x.Selected)
+                    x.Component_OnKeyPress(e);
+            });
         }
 
         public void Open()

@@ -59,7 +59,8 @@ namespace MyNote.Utils.Render
         
         public static void DrawCenteredString(string text, float x, float y)
         {
-            DrawString(text, x - GetStringWidth(text) / 2, y);
+            Vector size = GetStringSize(text);
+            DrawString(text, x - size.X / 2, y - size.Y / 2);
         }
 
         public static void DrawCenteredString(string text, Vector pos) => DrawCenteredString(text, pos.X, pos.Y);
@@ -98,8 +99,10 @@ namespace MyNote.Utils.Render
             g.DrawRectangle(new Pen(new SolidBrush(Color), lineWidth), x, y, width, height);
         }
 
-        public static void DrawRect(Vector position, float width, float height, float lineWidth) => DrawRect(position.X, position.Y, width, height, lineWidth);
-        
+        public static void DrawRect(Vector position, float width, float height, float lineWidth = 1) => DrawRect(position.X, position.Y, width, height, lineWidth);
+
+        public static void DrawRect(Vector position, Vector size, float lineWidth = 1) => DrawRect(position.X, position.Y, size.X, size.Y, lineWidth);
+
         /// <summary>
         /// Zeichnet ein gefülltest Rechteck;
         /// </summary>
@@ -113,6 +116,8 @@ namespace MyNote.Utils.Render
         }
 
         public static void FillRect(Vector pos, float width, float height) => FillRect(pos.X, pos.Y, width, height);
+
+        public static void FillRect(Vector pos, Vector size) => FillRect(pos.X, pos.Y, size.X, size.Y);
 
         /// <summary>
         /// Zeichnet einen Kreis
@@ -260,16 +265,10 @@ namespace MyNote.Utils.Render
         /// <param name="b"></param>
         public static void SetColor(int r, int g, int b) => SetColor(r, g, b, 255);
 
-        public static void SetColor(int r, int g, int b, int a)
-        {
-            state.Color = Color.FromArgb(a, r, g, b);
-        }
+        public static void SetColor(int r, int g, int b, int a) => state.Color = Color.FromArgb(a, r, g, b);
 
         public static void SetColor(Color color) => state.Color = color;
 
-        public static void SetFont(Font f)
-        {
-            state.Font = f;
-        }
+        public static void SetFont(Font f) => state.Font = f;
     }
 }

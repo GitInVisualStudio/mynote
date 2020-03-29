@@ -1,17 +1,21 @@
 ﻿using MyNote.Utils.Math;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MyNote.Gui
 {
-    public abstract class Component
+    public abstract class GuiComponent
     {
         private Vector location;
         private Vector size;
         private string name;
+        private bool selected;
+        private Color backColor = Color.Gray;
+        private Color fontColor = Color.Black;
         public event EventHandler<Vector> OnResize;
         public event EventHandler<Vector> OnClick;
         public event EventHandler<Vector> OnMove;
@@ -45,21 +49,30 @@ namespace MyNote.Gui
             }
         }
 
-        public void Component_OnResize(Vector location) => OnResize?.Invoke(this, location);
+        public string Name { get => name; set => name = value; }
+        public bool Selected { get => selected; set => selected = value; }
+        public Color BackColor { get => backColor; set => backColor = value; }
+        public Color FontColor { get => fontColor; set => fontColor = value; }
+
+        public void Component_OnResize(Vector size) => OnResize?.Invoke(this, size);
         public void Component_OnClick(Vector location) => OnClick?.Invoke(this, location);
         public void Component_OnRelease(Vector location) => OnRelease?.Invoke(this, location);
         public void Component_OnMove(Vector location) => OnMove?.Invoke(this, location);
         public void Component_OnKeyPress(char keyChar) => OnKeyPress?.Invoke(this, keyChar);
         public void Component_OnKeyRelease(char keyChar) => OnKeyRelease?.Invoke(this, keyChar);
 
+        public bool OnHover(Vector location)
+        {
+            return location.X > this.location.X && location.X < this.location.X + size.X && location.Y > this.location.Y && location.Y < this.location.Y + size.Y;
+        }
 
-        public Component(float x, float y, float width, float height)
+        public GuiComponent(float x, float y, float width, float height)
         {
             Location = new Vector(x, y);
             Size = new Vector(width, height);
         }
 
-        public Component(Vector location, Vector size)
+        public GuiComponent(Vector location, Vector size)
         {
             Location = location;
             Size = size;

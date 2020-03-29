@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MyNoteBase.Classes;
 using MyNote.Utils.Render;
+using MyNote.Gui.Screen;
 
 namespace MyNote
 {
@@ -25,6 +26,7 @@ namespace MyNote
         private System.Windows.Forms.Timer timer;
         private bool shouldUpdate;
         private Thread animationThread;
+        private bool opend;
 
         public bool ShouldUpdate
         {
@@ -35,10 +37,11 @@ namespace MyNote
 
             set
             {
-                if (value)
-                    timer.Start();
-                else
-                    timer.Stop();
+                if(timer != null)
+                    if (value)
+                        timer.Start();
+                    else
+                        timer.Stop();
                 shouldUpdate = value;
             }
         }
@@ -46,6 +49,7 @@ namespace MyNote
         public MyNote()
         {
             InitializeComponent();
+            Init();
         }
 
         public void Init()
@@ -53,18 +57,29 @@ namespace MyNote
             timer = new System.Windows.Forms.Timer();
             timer.Interval = 10000;
             timer.Start();
-
+            opend = true;
             animationThread = new Thread(() =>
             {
-                while (true)
+                while (opend)
                 {
                     AnimationManager.Update();
                     Thread.Sleep((int)(1000.0f / ANIMATION_UPDATES));
                     if (AnimationManager.animations.Count != 0)
-                        shouldUpdate = true;
+                        ShouldUpdate = true;
                 }
             });
             animationThread.Start();
+            OpenScreen(new GuiHeader());
+        }
+
+        private void AddEvents()
+        {
+            MouseClick += (object sender, MouseEventArgs e) => currentScreen?.Component_OnClick(new Utils.Math.Vector(e.X, e.Y));
+            MouseDown += (object sender, MouseEventArgs e) => currentScreen?.Component_OnRelease(new Utils.Math.Vector(e.X, e.Y));
+            MouseMove += (object sender, MouseEventArgs e) => currentScreen?.Component_OnMove(new Utils.Math.Vector(e.X, e.Y));
+            KeyDown += (object sender, KeyEventArgs args) => currentScreen?.Component_OnKeyPress((char)args.KeyValue);
+            KeyUp += (object sender, KeyEventArgs args) => currentScreen?.Component_OnKeyRelease((char)args.KeyValue);
+            Resize += (object sender, EventArgs e) => currentScreen?.Component_OnResize(new Utils.Math.Vector(Width, Height));
         }
 
         public void OpenScreen(GuiScreen screen)
@@ -72,18 +87,27 @@ namespace MyNote
             new Thread(() =>
             {
                 screen.Init();
-                currentScreen.Close();
-                while (currentScreen.Opend) ;
+                currentScreen?.Close();
+                while (currentScreen != null && currentScreen.Opend)
+                    Thread.Sleep(50);
                 currentScreen = screen;
+                ShouldUpdate = true;
             }).Start();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            opend = false;
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
+            StateManager.Update(e.Graphics);
+            currentScreen?.OnRender();
             //TODO: StateManager Objekt orientiert??
-            shouldUpdate = false;
+            ShouldUpdate = false;
         }
     }
 }

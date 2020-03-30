@@ -22,7 +22,7 @@ namespace MyNoteServer.Utils.DB
 
         public override string ToString()
         {
-            return data.ToString();
+            return DBConnection.MySQLEscape(data.ToString());
         }
     }
 }

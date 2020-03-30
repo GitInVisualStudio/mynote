@@ -29,14 +29,14 @@ namespace MyNoteServer.Utils.DB
 
         public override string ToString()
         {
-            string res = "(";
+            string res = "('";
             for (int i = 0; i < cells.Length; i++)
             {
                 res += cells[i];
                 if (i < cells.Length - 1)
-                    res += ",";
+                    res += "','";
             }
-            res += ")";
+            res += "')";
             return res;
         }
     }

@@ -110,5 +110,11 @@
   <ItemGroup>
     <EmbeddedResource Include="db_init.sql" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyNoteBase\MyNoteBase.csproj">
+      <Project>{D60D4802-B250-4E5D-80A6-9CFACA550551}</Project>
+      <Name>MyNoteBase</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

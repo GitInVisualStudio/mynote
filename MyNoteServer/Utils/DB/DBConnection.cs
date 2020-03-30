@@ -1,6 +1,7 @@
 ﻿using MySql.Data;
 using MySql.Data.MySqlClient;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace MyNoteServer.Utils.DB
 {
@@ -93,15 +94,28 @@ namespace MyNoteServer.Utils.DB
             return RowCollection.FromDataReader(Query(query));
         }
 
-        public void Insert(string table, RowCollection rows)
+        /// <summary>
+        /// Inserts values into a specified table and returns the id of the first item
+        /// </summary>
+        /// <returns>The id of the first inserted item</returns>
+        public int Insert(string table, RowCollection rows)
         {
-            Insert(table, rows.GetColumns().ToString(), rows.ToString());
+            return Insert(table, rows.GetColumns().ToString(), rows.ToString());
         }
 
-        public void Insert(string table, string columns, string rows)
+        /// <summary>
+        /// Inserts values into a specified table and returns the id of the first item
+        /// </summary>
+        /// <returns>The id of the first inserted item</returns>
+        public int Insert(string table, string columns, string rows)
         {
             if (database != "")
                 Query(string.Format("INSERT INTO {0} ({1}) VALUES {2}", table, columns, rows));
+            MySqlDataReader reader = Query("SELECT LAST_INSERT_ID() AS id");
+            int id = 0;
+            while (reader.Read())
+                id = (int)reader["id"];
+            return id;
         }
 
         public MySqlDataReader Query(string query)
@@ -128,6 +142,32 @@ namespace MyNoteServer.Utils.DB
             {
                 return -1;
             }
+        }
+
+        public static string MySQLEscape(string str)
+        {
+            return Regex.Replace(str, @"[\x00'""\b\n\r\t\cZ\\%_]",
+                delegate (Match match)
+                {
+                    string v = match.Value;
+                    switch (v)
+                    {
+                        case "\x00":            // ASCII NUL (0x00) character
+                    return "\\0";
+                        case "\b":              // BACKSPACE character
+                    return "\\b";
+                        case "\n":              // NEWLINE (linefeed) character
+                    return "\\n";
+                        case "\r":              // CARRIAGE RETURN character
+                    return "\\r";
+                        case "\t":              // TAB
+                    return "\\t";
+                        case "\u001A":          // Ctrl-Z
+                    return "\\Z";
+                        default:
+                            return "\\" + v;
+                    }
+                });
         }
 
         /// <summary>

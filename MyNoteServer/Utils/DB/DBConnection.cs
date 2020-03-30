@@ -117,6 +117,19 @@ namespace MyNoteServer.Utils.DB
             }
         }
 
+        public int ExecuteNonQuery(string text)
+        {
+            try
+            {
+                MySqlCommand c = new MySqlCommand(text, connection);
+                return c.ExecuteNonQuery();
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
         /// <summary>
         /// Deconstructor that closes the open connection
         /// </summary>

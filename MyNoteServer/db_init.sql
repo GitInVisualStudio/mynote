@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `mynote`.`user_in_course`(
 	`user_id` BIGINT NOT NULL,
 	`course_id` BIGINT NOT NULL,
 	`admin` BOOLEAN NOT NULL,
+	`interpretation_path` VARCHAR(511) NULL,
 	PRIMARY KEY (`user_id`, `course_id`),
 	FOREIGN KEY (`user_id`) REFERENCES `mynote`.`user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY (`course_id`) REFERENCES `mynote`.`course`(`id`) ON DELETE CASCADE ON UPDATE CASCADE

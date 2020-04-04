@@ -11,18 +11,20 @@ namespace MyNoteBase.Utils.IO
 {
     public class IOManager
     {
-        private string savePath;
+        private static string userSavePath;
+        private string appSavePath;
 
         private ISaveLoader sl;
-        private Dictionary<string, Semester> loadedSemesters;
-        private Dictionary<string, Course> loadedCourses;
+        private Dictionary<int, Semester> loadedSemesters;
+        private Dictionary<int, Course> loadedCourses;
 
         public IOManager(ISaveLoader sl)
         {
             this.sl = sl;
-            loadedSemesters = new Dictionary<string, Semester>();
-            loadedCourses = new Dictionary<string, Course>();
-            savePath = "D:\\KurzerAufenthalt\\Mynote\\saves" + Path.DirectorySeparatorChar.ToString();
+            loadedSemesters = new Dictionary<int, Semester>();
+            loadedCourses = new Dictionary<int, Course>();
+            userSavePath = "saves" + Path.DirectorySeparatorChar.ToString();
+            appSavePath = "userSaves" + Path.DirectorySeparatorChar.ToString();
         }
         
         public Canvas LoadCanvas(string path, IManager manager)
@@ -38,13 +40,18 @@ namespace MyNoteBase.Utils.IO
                 return null;
             }
 
-            if (loadedCourses.ContainsKey(c.CourseFilePath))
-                c.Course = loadedCourses[c.CourseFilePath];
+            if (loadedCourses.ContainsKey(c.CourseLocalID))
+                c.Course = loadedCourses[c.CourseLocalID];
             else
-                c.Course = LoadCourse(c.CourseFilePath);
+                c.Course = LoadCourse(c.CourseLocalID);
 
             c.Course.Canvasses.Add(c);
             return c;
+        }
+
+        public Course LoadCourse(int localID)
+        {
+            return LoadCourse(appSavePath + localID + ".myk");
         }
 
         public Course LoadCourse(string path)
@@ -60,13 +67,18 @@ namespace MyNoteBase.Utils.IO
                 return null;
             }
 
-            if (loadedSemesters.ContainsKey(c.SemesterFilePath))
-                c.Semester = loadedSemesters[c.SemesterFilePath];
+            if (loadedSemesters.ContainsKey(c.SemesterLocalID))
+                c.Semester = loadedSemesters[c.SemesterLocalID];
             else
-                c.Semester = LoadSemester(c.SemesterFilePath);
+                c.Semester = LoadSemester(c.SemesterLocalID);
 
             c.Semester.Courses.Add(c);
             return c;
+        }
+
+        public Semester LoadSemester(int localID)
+        {
+            return LoadSemester(appSavePath + localID + ".mys");
         }
 
         public Semester LoadSemester(string path)
@@ -85,28 +97,38 @@ namespace MyNoteBase.Utils.IO
 
         public string SaveCanvas(Canvas c)
         {
-            string coursePath = SaveCourse(c.Course);
-            c.CourseFilePath = coursePath;
-            string fileExtension = ".my" + c.GetType().Name[0];
-            string path = savePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + fileExtension;
+            SaveCourse(c.Course);
+            string fileExtension = ".myn";
+            string path = userSavePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + fileExtension;
             sl.Save(path, c);
             return path;
         }
 
         public string SaveCourse(Course c)
         {
-            string semesterPath = SaveSemester(c.Semester);
-            c.SemesterFilePath = semesterPath;
-            string path = savePath + c.Semester.Name + Path.DirectorySeparatorChar + c.Name + Path.DirectorySeparatorChar + "course.myk";
+            SaveSemester(c.Semester);
+            string path = appSavePath + c.LocalID + ".myk";
             sl.Save(path, c);
             return path;
         }
 
         public string SaveSemester(Semester s)
         {
-            string path = savePath + s.Name + Path.DirectorySeparatorChar + "semester.mys";
+            string path = appSavePath + s.LocalID + ".mys";
             sl.Save(path, s);
             return path;
+        }
+
+        public void SaveGlobals()
+        {
+            GlobalsInstancing instance = new GlobalsInstancing();
+            sl.Save(appSavePath + "globals.cfg", instance);
+        }
+
+        public void LoadGlobals()
+        {
+            GlobalsInstancing instance = (GlobalsInstancing)sl.Load(appSavePath + "globals.cfg");
+            Globals.InitFromInstance(instance);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MyNoteBase.Canvasses;
+using MyNoteBase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,7 +19,10 @@ namespace MyNoteBase.Classes
         private Utils.Graphic.Icon icon;
         [NonSerialized]
         private Semester semester;
-        private string semesterFilePath;
+        private int onlineID;
+        private int localID;
+        private int semesterOnlineID;
+        private int semesterLocalID;
         private List<Test> tests;
 
         public string Name
@@ -74,8 +78,11 @@ namespace MyNoteBase.Classes
         }
 
         public Semester Semester { get => semester; set => semester = value; }
-        public string SemesterFilePath { get => semesterFilePath; set => semesterFilePath = value; }
         public List<Test> Tests { get => tests; set => tests = value; }
+        public int SemesterOnlineID { get => semesterOnlineID; set => semesterOnlineID = value; }
+        public int SemesterLocalID { get => semesterLocalID; set => semesterLocalID = value; }
+        public int LocalID { get => localID; }
+        public int OnlineID { get => onlineID; set => onlineID = value; }
 
         public Course(string name, Color color, Utils.Graphic.Icon icon, Semester s)
         {
@@ -84,6 +91,10 @@ namespace MyNoteBase.Classes
             this.icon = icon;
             this.canvasses = new List<Canvas>();
             this.semester = s;
+            this.localID = Globals.GetAndIncrementLocalID();
+            this.onlineID = 0;
+            this.semesterLocalID = semester.LocalID;
+            this.SemesterOnlineID = semester.OnlineID;
         }
 
         public void InitAfterDeserialization()

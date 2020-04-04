@@ -1,4 +1,5 @@
 ﻿using MyNoteBase.Classes;
+using MyNoteBase.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -18,7 +19,10 @@ namespace MyNoteBase.Canvasses
         private string name;
         [NonSerialized]
         private Course course;
-        private string courseFilePath;
+        private int onlineID;
+        private int localID;
+        private int courseOnlineID;
+        private int courseLocalID;
         private Image pixels;
 
         public IManager Manager
@@ -63,8 +67,11 @@ namespace MyNoteBase.Canvasses
             }
         }
 
-        public string CourseFilePath { get => courseFilePath; set => courseFilePath = value; }
         public Image Pixels { get => manager.GetImage(); set => manager.SetImage(value); }
+        public int CourseOnlineID { get => courseOnlineID; set => courseOnlineID = value; }
+        public int CourseLocalID { get => courseLocalID; set => courseLocalID = value; }
+        public int LocalID { get => localID;  }
+        public int OnlineID { get => onlineID; set => onlineID = value; }
 
         public Canvas(DateTime dt, string name, Course course, IManager manager)
         {
@@ -72,6 +79,10 @@ namespace MyNoteBase.Canvasses
             this.name = name;
             this.course = course;
             this.manager = manager;
+            this.localID = Globals.GetAndIncrementLocalID();
+            this.onlineID = 0;
+            this.courseLocalID = course.LocalID;
+            this.courseOnlineID = course.OnlineID;
         }
 
         public void PrepareForSerialization()

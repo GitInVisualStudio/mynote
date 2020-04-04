@@ -7,6 +7,7 @@ USE mynote;
 CREATE TABLE IF NOT EXISTS `mynote`.`user` (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`email` VARCHAR(50) NOT NULL,
+	`username` VARCHAR(30) NOT NULL,
 	`password` CHAR(64) NOT NULL,
 	`salt` INT NOT NULL,
 	`auth` CHAR(32) NULL,

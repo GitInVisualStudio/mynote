@@ -39,7 +39,7 @@ namespace MyNoteBase.Utils.API
 
         public async Task<string> Test()
         {
-            string token = await GetAuthToken("yamimiriam", "Maxstrasse90").ConfigureAwait(false);
+            string token = await GetAuthToken("username", "password").ConfigureAwait(false);
             return token;
         }
     }

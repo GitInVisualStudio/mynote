@@ -51,10 +51,11 @@ namespace MyNote
             //Semester s = new Semester("Q2", new DateTime(2020, 4, 8));
             //Course k = new Course("Deutsch Reinke", new DateTime(2020, 4, 8), Color.Red, new MyNoteBase.Utils.Graphic.Icon("Heft", new Bitmap(32, 32)), s);
             //Note n = new Note(new DateTime(2020, 4, 8, 11, 40, 0), "als wir noch unterricht hatten lol", k, new TestIManager());
-
+            //Test t = new Test(new DateTime(2020, 4, 21), k, "Zuhausearbeit", TestType.Exam);
             //manager.SaveCanvas(n);
 
-            object o = manager.LoadCanvas("userSaves\\Q2\\Deutsch Reinke\\als wir noch unterricht hatten lol.myn", new TestIManager());
+            Canvas o = manager.LoadCanvas("userSaves\\Q2\\Deutsch Reinke\\als wir noch unterricht hatten lol.myn", new TestIManager());
+            
         }
 
         public void Init()
@@ -91,7 +92,7 @@ namespace MyNote
         {
             base.OnPaint(e);
 
-            //TODO: StateManager Objekt orientiert??
+            //TODO: StateManager Objekt orientiert // edit von miriam: ja bitte, implementieren von MyNoteBase.Utils.Graphic.IManager danke lg
             shouldUpdate = false;
         }
     }

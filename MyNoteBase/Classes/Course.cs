@@ -29,6 +29,7 @@ namespace MyNoteBase.Classes
         private string semesterLocalID;
         [JsonIgnore]
         private List<Test> tests;
+        private List<string> testLocalIDs;
 
         public string Name
         {
@@ -112,6 +113,7 @@ namespace MyNoteBase.Classes
         }
 
         public DateTime Created { get => created; set => created = value; }
+        public List<string> TestLocalIDs { get => testLocalIDs; set => testLocalIDs = value; }
 
         public Course(JObject json)
         {
@@ -122,6 +124,7 @@ namespace MyNoteBase.Classes
             this.localID = json["localID"].ToObject<string>();
             this.semesterOnlineID = json["semesterOnlineID"].ToObject<int>();
             this.semesterLocalID = json["semesterLocalID"].ToObject<string>();
+            this.testLocalIDs = json["testLocalIDs"].ToObject<List<string>>();
             this.canvasses = new List<Canvas>();
             this.tests = new List<Test>();
         }
@@ -139,6 +142,13 @@ namespace MyNoteBase.Classes
             this.semesterLocalID = semester.LocalID;
             this.SemesterOnlineID = semester.OnlineID;
             this.tests = new List<Test>();
+        }
+
+        public void PrepareForSerialization()
+        {
+            TestLocalIDs = new List<string>();
+            foreach (Test t in tests)
+                TestLocalIDs.Add(t.LocalID);
         }
     }
 }

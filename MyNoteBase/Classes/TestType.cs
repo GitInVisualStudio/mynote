@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace MyNoteBase.Classes
 {
-    [Serializable]
     public enum TestType
     {
         Exam = 0,

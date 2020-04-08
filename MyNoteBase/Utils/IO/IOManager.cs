@@ -63,6 +63,9 @@ namespace MyNoteBase.Utils.IO
             try
             {
                 c = new Course(Serializer.Deserialize(sl.Load(path)));
+                loadedCourses.Add(c.LocalID, c);
+                foreach (string id in c.TestLocalIDs)
+                    LoadTestByID(id);
             }
             catch
             {
@@ -75,7 +78,6 @@ namespace MyNoteBase.Utils.IO
                 c.Semester = LoadSemesterByID(c.SemesterLocalID);
 
             c.Semester.Courses.Add(c);
-            loadedCourses.Add(c.LocalID, c);
             return c;
         }
 
@@ -98,6 +100,29 @@ namespace MyNoteBase.Utils.IO
             }
         }
 
+        public Test LoadTestByID(string localID)
+        {
+            return LoadTest(appSavePath + localID + "myt");
+        }
+
+        public Test LoadTest(string path)
+        {
+            try
+            {
+                Test t = new Test(Serializer.Deserialize(sl.Load(path)));
+                if (loadedCourses.ContainsKey(t.CourseLocalID))
+                    t.Course = loadedCourses[t.CourseLocalID];
+                else
+                    t.Course = LoadCourseByID(t.CourseLocalID);
+                t.Course.Tests.Add(t);
+                return t;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public string SaveCanvas(Canvas c)
         {
             SaveCourse(c.Course);
@@ -111,8 +136,11 @@ namespace MyNoteBase.Utils.IO
         public string SaveCourse(Course c)
         {
             SaveSemester(c.Semester);
+            c.PrepareForSerialization();
             string path = appSavePath + c.LocalID + ".myk";
             sl.Save(path, Serializer.Serialize(c));
+            foreach (Test t in c.Tests)
+                SaveTest(t);
             return path;
         }
 
@@ -120,6 +148,13 @@ namespace MyNoteBase.Utils.IO
         {
             string path = appSavePath + s.LocalID + ".mys";
             sl.Save(path, Serializer.Serialize(s));
+            return path;
+        }
+
+        public string SaveTest(Test t)
+        {
+            string path = appSavePath + t.LocalID + ".myt";
+            sl.Save(path, Serializer.Serialize(t));
             return path;
         }
 

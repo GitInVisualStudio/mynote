@@ -1,5 +1,6 @@
 ﻿using MyNoteBase.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,18 @@ namespace MyNoteBase.Classes
         public int CourseOnlineID { get => courseOnlineID; set => courseOnlineID = value; }
         public string CourseLocalID { get => courseLocalID; set => courseLocalID = value; }
         public string LocalID { get => localID; }
+        public int OnlineID { get => onlineID; set => onlineID = value; }
+
+        public Test(JObject json)
+        {
+            this.date = json["date"].ToObject<DateTime>();
+            this.topic = json["topic"].ToObject<string>();
+            this.onlineID = json["onlineID"].ToObject<int>();
+            this.localID = json["localID"].ToObject<string>();
+            this.courseLocalID = json["courseLocalID"].ToObject<string>();
+            this.courseOnlineID = json["courseOnlineID"].ToObject<int>();
+            this.type = json["type"].ToObject<TestType>();
+        }
 
         public Test(DateTime date, Course course, string topic, TestType type)
         {
@@ -35,7 +48,8 @@ namespace MyNoteBase.Classes
             this.course = course;
             this.topic = topic;
             this.type = type;
-            this.localID = Globals.GetLocalID(course.Name + topic, date);
+            this.onlineID = 0;
+            this.localID = Globals.GetLocalID("t_" + course.Name + topic, date);
             course.Tests.Add(this);
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;

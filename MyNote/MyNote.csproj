@@ -67,6 +67,9 @@
     <Compile Include="Utils\Render\StateManager.cs" />
     <Compile Include="Utils\Render\TestIManager.cs" />
     <Compile Include="Utils\ResourceManager.cs" />
+    <EmbeddedResource Include="MyNote.resx">
+      <DependentUpon>MyNote.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

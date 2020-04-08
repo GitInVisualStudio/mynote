@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MyNoteBase.Classes;
 using MyNote.Utils.Render;
+using MyNoteBase.Utils.API;
 
 namespace MyNote
 {
@@ -84,6 +85,17 @@ namespace MyNote
 
             //TODO: StateManager Objekt orientiert // edit von miriam: ja bitte, implementieren von MyNoteBase.Utils.Graphic.IManager danke lg
             shouldUpdate = false;
+        }
+
+        private void btnTest_Click(object sender, EventArgs e) // DEBUG
+        {
+            TestAPI().Wait();
+        }
+
+        private async Task TestAPI()
+        {
+            APIManager manager = new APIManager();
+            Console.WriteLine(await manager.Test().ConfigureAwait(false));
         }
     }
 }

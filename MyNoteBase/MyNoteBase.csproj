@@ -50,7 +50,12 @@
     <Compile Include="Canvasses\VocabularyPair.cs" />
     <Compile Include="Classes\Test.cs" />
     <Compile Include="Classes\TestType.cs" />
+    <Compile Include="Utils\API\APIExceptionManager.cs" />
+    <Compile Include="Utils\API\APIManager.cs" />
+    <Compile Include="Utils\Exceptions\APIException.cs" />
     <Compile Include="Utils\Exceptions\ImageListsNotEqualSizeException.cs" />
+    <Compile Include="Utils\Exceptions\MissingParametersException.cs" />
+    <Compile Include="Utils\Exceptions\WrongCredentialsException.cs" />
     <Compile Include="Utils\Globals.cs" />
     <Compile Include="Utils\GlobalsInstancing.cs" />
     <Compile Include="Utils\Graphic\IManager.cs" />
@@ -70,6 +75,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

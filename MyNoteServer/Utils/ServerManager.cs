@@ -43,7 +43,7 @@ namespace MyNoteServer.Utils
             return cmd;
         }
 
-        public int CreateUser(string email, string password)
+        public int CreateUser(string email, string username, string password)
         {
             int salt = rnd.Next(100000, 999999);
             password = HashAndSalt(password, salt);
@@ -53,7 +53,8 @@ namespace MyNoteServer.Utils
                 {
                     new Cell(new Column("email", typeof(string)), email),
                     new Cell(new Column("password", typeof(string)), password),
-                    new Cell(new Column("salt", typeof(int)), salt)
+                    new Cell(new Column("salt", typeof(int)), salt),
+                    new Cell(new Column("username", typeof(string)), username)
                 })
             });
             connection.Insert("user", rows);

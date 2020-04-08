@@ -1,7 +1,9 @@
 ﻿using MyNoteBase.Canvasses;
 using MyNoteBase.Classes;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,8 +25,8 @@ namespace MyNoteBase.Utils.IO
             this.sl = sl;
             loadedSemesters = new Dictionary<int, Semester>();
             loadedCourses = new Dictionary<int, Course>();
-            userSavePath = "saves" + Path.DirectorySeparatorChar.ToString();
-            appSavePath = "userSaves" + Path.DirectorySeparatorChar.ToString();
+            userSavePath = "userSaves" + Path.DirectorySeparatorChar.ToString();
+            appSavePath = "saves" + Path.DirectorySeparatorChar.ToString();
         }
         
         public Canvas LoadCanvas(string path, IManager manager)
@@ -32,8 +34,9 @@ namespace MyNoteBase.Utils.IO
             Canvas c;
             try
             {
-                c = (Canvas)sl.Load(path);
-                c.InitAfterDeserialization(manager);
+                JObject json = Serializer.Deserialize(sl.Load(path));
+                Type t = json["type"].ToObject<Type>();
+                c = (Canvas)t.GetConstructor(new Type[] { typeof(JObject), typeof(IManager) }).Invoke(new object[] { json, manager });
             }
             catch
             {
@@ -59,8 +62,7 @@ namespace MyNoteBase.Utils.IO
             Course c;
             try
             {
-                c = (Course)sl.Load(path);
-                c.InitAfterDeserialization();
+                c = new Course(Serializer.Deserialize(sl.Load(path)));
             }
             catch
             {
@@ -85,8 +87,7 @@ namespace MyNoteBase.Utils.IO
         {
             try
             {
-                Semester s = (Semester)sl.Load(path);
-                s.InitAfterDeserialization();
+                Semester s = new Semester(Serializer.Deserialize(sl.Load(path)));
                 return s;
             }
             catch
@@ -98,9 +99,10 @@ namespace MyNoteBase.Utils.IO
         public string SaveCanvas(Canvas c)
         {
             SaveCourse(c.Course);
+            c.PrepareForSerialization();
             string fileExtension = ".myn";
             string path = userSavePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + fileExtension;
-            sl.Save(path, c);
+            sl.Save(path, Serializer.Serialize(c));
             return path;
         }
 
@@ -108,26 +110,26 @@ namespace MyNoteBase.Utils.IO
         {
             SaveSemester(c.Semester);
             string path = appSavePath + c.LocalID + ".myk";
-            sl.Save(path, c);
+            sl.Save(path, Serializer.Serialize(c));
             return path;
         }
 
         public string SaveSemester(Semester s)
         {
             string path = appSavePath + s.LocalID + ".mys";
-            sl.Save(path, s);
+            sl.Save(path, Serializer.Serialize(s));
             return path;
         }
 
         public void SaveGlobals()
         {
             GlobalsInstancing instance = new GlobalsInstancing();
-            sl.Save(appSavePath + "globals.cfg", instance);
+            sl.Save(appSavePath + "globals.cfg", Serializer.Serialize(instance));
         }
 
         public void LoadGlobals()
         {
-            GlobalsInstancing instance = (GlobalsInstancing)sl.Load(appSavePath + "globals.cfg");
+            GlobalsInstancing instance = new GlobalsInstancing(Serializer.Deserialize(sl.Load(appSavePath + "globals.cfg")));
             Globals.InitFromInstance(instance);
         }
     }

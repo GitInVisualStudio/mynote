@@ -1,5 +1,7 @@
 ﻿using MyNoteBase.Classes;
 using MyNoteBase.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,20 +12,22 @@ using System.Xml.Serialization;
 
 namespace MyNoteBase.Canvasses
 {
-    [Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public abstract class Canvas
     {
-        [NonSerialized]
+        [JsonIgnore]
         private IManager manager;
         private DateTime dt;
         private string name;
-        [NonSerialized]
+        [JsonIgnore]
         private Course course;
         private int onlineID;
         private int localID;
         private int courseOnlineID;
         private int courseLocalID;
+        [JsonConverter(typeof(Utils.IO.ImageConverter))]
         private Image pixels;
+        private Type type;
 
         public IManager Manager
         {
@@ -38,7 +42,6 @@ namespace MyNoteBase.Canvasses
             }
         }
 
-        [XmlIgnore]
         public Course Course { get => course; set => course = value; }
 
         public DateTime Dt
@@ -73,6 +76,21 @@ namespace MyNoteBase.Canvasses
         public int LocalID { get => localID;  }
         public int OnlineID { get => onlineID; set => onlineID = value; }
 
+        public Canvas(JObject json, IManager manager)
+        {
+            this.manager = manager;
+            this.dt = json["dt"].ToObject<DateTime>();
+            this.name = json["name"].ToObject<string>();
+            this.onlineID = json["onlineID"].ToObject<int>();
+            this.localID = json["localID"].ToObject<int>();
+            this.courseOnlineID = json["courseOnlineID"].ToObject<int>();
+            this.courseLocalID = json["courseLocalID"].ToObject<int>();
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Converters.Add(new Utils.IO.ImageConverter());
+            this.manager.SetImage(json["pixels"].ToObject<Image>(serializer));
+            this.type = GetType();
+        }
+
         public Canvas(DateTime dt, string name, Course course, IManager manager)
         {
             this.dt = dt;
@@ -83,6 +101,7 @@ namespace MyNoteBase.Canvasses
             this.onlineID = 0;
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;
+            this.type = GetType();
         }
 
         public void PrepareForSerialization()

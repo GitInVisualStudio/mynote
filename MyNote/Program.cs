@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyNote.Utils.IO;
+using MyNoteBase.Utils.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,9 +16,13 @@ namespace MyNote
         [STAThread]
         static void Main()
         {
+            IOManager manager = new IOManager(new SaveLoader());
+            manager.LoadGlobals();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MyNote());
+            manager.SaveGlobals();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using MyNoteBase.Canvasses;
 using MyNoteBase.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,19 +12,21 @@ using System.Xml.Serialization;
 
 namespace MyNoteBase.Classes
 {
-    [Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public class Course
     {
         private string name;
         private Color color;
+        [JsonIgnore]
         private List<Canvas> canvasses;
         private Utils.Graphic.Icon icon;
-        [NonSerialized]
+        [JsonIgnore]
         private Semester semester;
         private int onlineID;
         private int localID;
         private int semesterOnlineID;
         private int semesterLocalID;
+        [JsonIgnore]
         private List<Test> tests;
 
         public string Name
@@ -84,6 +88,19 @@ namespace MyNoteBase.Classes
         public int LocalID { get => localID; }
         public int OnlineID { get => onlineID; set => onlineID = value; }
 
+        public Course(JObject json)
+        {
+            this.name = json["name"].ToObject<string>();
+            this.color = json["color"].ToObject<Color>();
+            this.icon = new Utils.Graphic.Icon(json["icon"].ToObject<JObject>());
+            this.onlineID = json["onlineID"].ToObject<int>();
+            this.localID = json["localID"].ToObject<int>();
+            this.semesterOnlineID = json["semesterOnlineID"].ToObject<int>();
+            this.semesterLocalID = json["semesterLocalID"].ToObject<int>();
+            this.canvasses = new List<Canvas>();
+            this.tests = new List<Test>();
+        }
+
         public Course(string name, Color color, Utils.Graphic.Icon icon, Semester s)
         {
             this.name = name;
@@ -95,11 +112,7 @@ namespace MyNoteBase.Classes
             this.onlineID = 0;
             this.semesterLocalID = semester.LocalID;
             this.SemesterOnlineID = semester.OnlineID;
-        }
-
-        public void InitAfterDeserialization()
-        {
-            canvasses = new List<Canvas>();
+            this.tests = new List<Test>();
         }
     }
 }

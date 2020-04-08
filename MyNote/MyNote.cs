@@ -46,6 +46,15 @@ namespace MyNote
         public MyNote()
         {
             InitializeComponent();
+            IOManager manager = new IOManager(new SaveLoader());
+
+            //Semester s = new Semester("Q2", new DateTime(2020, 4, 8));
+            //Course k = new Course("Deutsch Reinke", new DateTime(2020, 4, 8), Color.Red, new MyNoteBase.Utils.Graphic.Icon("Heft", new Bitmap(32, 32)), s);
+            //Note n = new Note(new DateTime(2020, 4, 8, 11, 40, 0), "als wir noch unterricht hatten lol", k, new TestIManager());
+
+            //manager.SaveCanvas(n);
+
+            object o = manager.LoadCanvas("userSaves\\Q2\\Deutsch Reinke\\als wir noch unterricht hatten lol.myn", new TestIManager());
         }
 
         public void Init()

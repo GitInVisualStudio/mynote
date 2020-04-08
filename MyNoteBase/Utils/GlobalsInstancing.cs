@@ -25,7 +25,7 @@ namespace MyNoteBase.Utils
 
         public GlobalsInstancing()
         {
-            this.currentLocalID = Globals.CurrentLocalID;
+
         }
     }
 }

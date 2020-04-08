@@ -22,9 +22,9 @@ namespace MyNoteBase.Canvasses
         [JsonIgnore]
         private Course course;
         private int onlineID;
-        private int localID;
+        private string localID;
         private int courseOnlineID;
-        private int courseLocalID;
+        private string courseLocalID;
         [JsonConverter(typeof(Utils.IO.ImageConverter))]
         private Image pixels;
         private Type type;
@@ -72,8 +72,8 @@ namespace MyNoteBase.Canvasses
 
         public Image Pixels { get => manager.GetImage(); set => manager.SetImage(value); }
         public int CourseOnlineID { get => courseOnlineID; set => courseOnlineID = value; }
-        public int CourseLocalID { get => courseLocalID; set => courseLocalID = value; }
-        public int LocalID { get => localID;  }
+        public string CourseLocalID { get => courseLocalID; set => courseLocalID = value; }
+        public string LocalID { get => localID;  }
         public int OnlineID { get => onlineID; set => onlineID = value; }
 
         public Canvas(JObject json, IManager manager)
@@ -82,9 +82,9 @@ namespace MyNoteBase.Canvasses
             this.dt = json["dt"].ToObject<DateTime>();
             this.name = json["name"].ToObject<string>();
             this.onlineID = json["onlineID"].ToObject<int>();
-            this.localID = json["localID"].ToObject<int>();
+            this.localID = json["localID"].ToObject<string>();
             this.courseOnlineID = json["courseOnlineID"].ToObject<int>();
-            this.courseLocalID = json["courseLocalID"].ToObject<int>();
+            this.courseLocalID = json["courseLocalID"].ToObject<string>();
             JsonSerializer serializer = new JsonSerializer();
             serializer.Converters.Add(new Utils.IO.ImageConverter());
             this.manager.SetImage(json["pixels"].ToObject<Image>(serializer));
@@ -97,7 +97,7 @@ namespace MyNoteBase.Canvasses
             this.name = name;
             this.course = course;
             this.manager = manager;
-            this.localID = Globals.GetAndIncrementLocalID();
+            this.localID = Globals.GetLocalID("c_" + name, dt);
             this.onlineID = 0;
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;

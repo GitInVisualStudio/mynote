@@ -17,14 +17,14 @@ namespace MyNoteBase.Utils.IO
         private string appSavePath;
 
         private ISaveLoader sl;
-        private Dictionary<int, Semester> loadedSemesters;
-        private Dictionary<int, Course> loadedCourses;
+        private Dictionary<string, Semester> loadedSemesters;
+        private Dictionary<string, Course> loadedCourses;
 
         public IOManager(ISaveLoader sl)
         {
             this.sl = sl;
-            loadedSemesters = new Dictionary<int, Semester>();
-            loadedCourses = new Dictionary<int, Course>();
+            loadedSemesters = new Dictionary<string, Semester>();
+            loadedCourses = new Dictionary<string, Course>();
             userSavePath = "userSaves" + Path.DirectorySeparatorChar.ToString();
             appSavePath = "saves" + Path.DirectorySeparatorChar.ToString();
         }
@@ -46,13 +46,13 @@ namespace MyNoteBase.Utils.IO
             if (loadedCourses.ContainsKey(c.CourseLocalID))
                 c.Course = loadedCourses[c.CourseLocalID];
             else
-                c.Course = LoadCourse(c.CourseLocalID);
+                c.Course = LoadCourseByID(c.CourseLocalID);
 
             c.Course.Canvasses.Add(c);
             return c;
         }
 
-        public Course LoadCourse(int localID)
+        public Course LoadCourseByID(string localID)
         {
             return LoadCourse(appSavePath + localID + ".myk");
         }
@@ -72,13 +72,14 @@ namespace MyNoteBase.Utils.IO
             if (loadedSemesters.ContainsKey(c.SemesterLocalID))
                 c.Semester = loadedSemesters[c.SemesterLocalID];
             else
-                c.Semester = LoadSemester(c.SemesterLocalID);
+                c.Semester = LoadSemesterByID(c.SemesterLocalID);
 
             c.Semester.Courses.Add(c);
+            loadedCourses.Add(c.LocalID, c);
             return c;
         }
 
-        public Semester LoadSemester(int localID)
+        public Semester LoadSemesterByID(string localID)
         {
             return LoadSemester(appSavePath + localID + ".mys");
         }
@@ -88,6 +89,7 @@ namespace MyNoteBase.Utils.IO
             try
             {
                 Semester s = new Semester(Serializer.Deserialize(sl.Load(path)));
+                loadedSemesters.Add(s.LocalID, s);
                 return s;
             }
             catch

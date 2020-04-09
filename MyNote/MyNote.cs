@@ -94,7 +94,7 @@ namespace MyNote
 
         private async Task TestAPI()
         {
-            APIManager manager = new APIManager();
+            APIManager manager = new APIManager("test", "");
             Console.WriteLine(await manager.Test().ConfigureAwait(false));
         }
     }

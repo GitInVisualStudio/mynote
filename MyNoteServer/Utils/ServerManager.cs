@@ -22,6 +22,7 @@ namespace MyNoteServer.Utils
             rnd = new CRandom();
             connection = new DBConnection(host, user, password);
             InitDB();
+            CreateUser("test@test.com", "test", "");
         }
 
         private void InitDB()

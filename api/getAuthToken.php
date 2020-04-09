@@ -1,12 +1,13 @@
 <?php
 require_once("Utils/DBConnection.php");
+require_once("Utils/Globals.php");
 require_once("Exceptions/MissingParameterException.php");
 require_once("Exceptions/WrongCredentialsException.php");
 
 function main() : array {
     $connection = new DBConnection("127.0.0.1", "root", "", "mynote");
     
-    if (!(array_key_exists("username", $_POST) || array_key_exists("password", $_POST)))
+    if (!(array_key_exists("username", $_POST) && array_key_exists("password", $_POST)))
         throw new MissingParameterException();
     
     $username = $connection->realEscapeString($_POST["username"]);
@@ -17,12 +18,15 @@ function main() : array {
     $salt = $result[0]["salt"];
     $hash = hash("sha256", $password . $salt);
     $result = $connection->select("user", ["id"], "`username` = '{$username}' AND `password` = '{$hash}'");
-    if (sizeof($result) != 1)
+    if (sizeof($result) === 0)
         throw new WrongCredentialsException();
     
     $user_id = $result[0]["id"];
-    $dt = date("Y-m-d H:i:s", time());
-    $token = hash("sha256", $username . time());
+    $dt = Globals::dateTimeNow();
+    do {
+        $token = hash("sha256", $username . time());
+        $result = $connection->select("user", ["id"], "`auth` = '{$token}'");
+    } while(sizeof($result) !== 0);
     $connection->query("UPDATE user SET `auth` = '{$token}', `auth_since` = '{$dt}' WHERE `id` = '{$user_id}'");
     $result = ["result" => "ok", "token" => $token];
     

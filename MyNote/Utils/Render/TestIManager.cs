@@ -15,7 +15,7 @@ namespace MyNote.Utils.Render
         public Image GetImage()
         {
             if (img == null)
-                img = new Bitmap("D:\\Bilder\\lulz\\665.jpg");
+                img = new Bitmap("D:/KurzerAufenthalt/img.png");
             return img;
         }
 

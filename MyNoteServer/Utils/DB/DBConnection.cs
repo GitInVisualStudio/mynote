@@ -113,6 +113,8 @@ namespace MyNoteServer.Utils.DB
                 Query(string.Format("INSERT INTO {0} ({1}) VALUES {2}", table, columns, rows));
             MySqlDataReader reader = Query("SELECT LAST_INSERT_ID() AS id");
             int id = 0;
+            if (reader == null)
+                return 0;
             while (reader.Read())
                 id = (int)reader["id"];
             return id;

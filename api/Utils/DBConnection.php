@@ -39,6 +39,19 @@ class DBConnection
         
         return $this->query($query);
     }
+
+    function insert(string $table, array $rows) : array {
+        if (empty($rows))
+            return [];
+        $cols = array_keys($rows[0]);
+        $colsStr = "(" . $this->makeArraySqlReady($cols, "`") . ")";
+        $rowsStr = $this->makeMultidimArraySqlReady($rows);
+        $query = "INSERT INTO `{$table}` {$colsStr} VALUES {$rowsStr}";
+        $this->query($query);
+        $start_id = $this->connection->insert_id;
+        $end_id = $start_id + sizeof($rows) - 1;
+        return range($start_id, $end_id);
+    }
         
     private function makeArraySqlReady(array $arr, string $escape_char = "") : string {
         foreach ($arr as &$item) {
@@ -49,10 +62,16 @@ class DBConnection
     }
     
     private function makeMultidimArraySqlReady(array $arr, bool $escape = true) : string {
-        
+        $res = [];
+        foreach ($arr as $row)
+            $res[] = "(" . $this->makeArraySqlReady($row, "'") . ")";
+
+        return implode(", ", $res);
     }
     
     function realEscapeString(string $str) : string {
+        if ($str == "NOW()")
+            return $str;
         return $this->connection->real_escape_string($str);
     }
 }

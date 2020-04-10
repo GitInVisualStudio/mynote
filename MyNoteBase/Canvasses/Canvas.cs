@@ -27,7 +27,7 @@ namespace MyNoteBase.Canvasses
         private string courseLocalID;
         [JsonConverter(typeof(Utils.IO.ImageConverter))]
         private Image pixels;
-        private Type type;
+        private string type;
 
         public IManager Manager
         {
@@ -88,7 +88,7 @@ namespace MyNoteBase.Canvasses
             JsonSerializer serializer = new JsonSerializer();
             serializer.Converters.Add(new Utils.IO.ImageConverter());
             this.manager.SetImage(json["pixels"].ToObject<Image>(serializer));
-            this.type = GetType();
+            this.type = GetType().Name;
         }
 
         public Canvas(DateTime dt, string name, Course course, IManager manager)
@@ -96,12 +96,13 @@ namespace MyNoteBase.Canvasses
             this.dt = dt;
             this.name = name;
             this.course = course;
+            this.course.Canvasses.Add(this);
             this.manager = manager;
             this.localID = Globals.GetLocalID("c_" + name, dt);
             this.onlineID = 0;
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;
-            this.type = GetType();
+            this.type = GetType().Name;
         }
 
         public void PrepareForSerialization()

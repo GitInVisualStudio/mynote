@@ -53,9 +53,16 @@
     <Compile Include="Utils\API\APIExceptionManager.cs" />
     <Compile Include="Utils\API\APIManager.cs" />
     <Compile Include="Utils\Exceptions\APIException.cs" />
+    <Compile Include="Utils\Exceptions\AuthTokenExpiredException.cs" />
+    <Compile Include="Utils\Exceptions\IllegalOperationException.cs" />
     <Compile Include="Utils\Exceptions\ImageListsNotEqualSizeException.cs" />
+    <Compile Include="Utils\Exceptions\InsufficientPermissionsException.cs" />
+    <Compile Include="Utils\Exceptions\InvalidHigherIDException.cs" />
     <Compile Include="Utils\Exceptions\MissingParametersException.cs" />
+    <Compile Include="Utils\Exceptions\ObjectDoesntExistException.cs" />
+    <Compile Include="Utils\Exceptions\ServerException.cs" />
     <Compile Include="Utils\Exceptions\WrongCredentialsException.cs" />
+    <Compile Include="Utils\Exceptions\WrongFormatException.cs" />
     <Compile Include="Utils\Globals.cs" />
     <Compile Include="Utils\GlobalsInstancing.cs" />
     <Compile Include="Utils\Graphic\IManager.cs" />

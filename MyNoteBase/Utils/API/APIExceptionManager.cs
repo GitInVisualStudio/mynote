@@ -11,8 +11,15 @@ namespace MyNoteBase.Utils.API
     {
         private static Type[] ExceptionTypes = new Type[]
         {
+            typeof(ServerException),
             typeof(MissingParametersException),
-            typeof(WrongCredentialsException)
+            typeof(WrongCredentialsException),
+            typeof(WrongFormatException),
+            typeof(AuthTokenExpiredException),
+            typeof(InsufficientPermissionsException),
+            typeof(InvalidHigherIDException),
+            typeof(ObjectDoesntExistException),
+            typeof(IllegalOperationException)
         };
 
         public static APIException FromID(int id)

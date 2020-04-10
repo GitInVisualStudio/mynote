@@ -46,7 +46,11 @@ namespace MyNote
 
         public MyNote()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            this.s = new Semester("Q2", DateTime.Now);
+            this.k = new Course("名前?", DateTime.Now, Color.Red, new MyNoteBase.Utils.Graphic.Icon("Heft", new Bitmap(32, 32), 1), s);
+            this.c = new Note(DateTime.Now, "als wir noch unterricht hatten lol", k, new TestIManager());
         }
 
         public void Init()
@@ -89,13 +93,16 @@ namespace MyNote
 
         private void btnTest_Click(object sender, EventArgs e) // DEBUG
         {
-            TestAPI().Wait();
+            TestAPI().ConfigureAwait(false);
         }
 
+        private APIManager manager = new APIManager("test", "");
+        private Semester s;
+        private Course k;
+        private Canvas c;
         private async Task TestAPI()
         {
-            APIManager manager = new APIManager("test", "");
-            Console.WriteLine(await manager.Test().ConfigureAwait(false));
+            await manager.Test().ConfigureAwait(false);
         }
     }
 }

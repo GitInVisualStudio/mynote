@@ -15,6 +15,11 @@ namespace MyNoteBase.Utils.IO
     {
         private static JsonSerializer serializer = new JsonSerializer();
 
+        public static JObject SerializeToJson(object obj)
+        {
+            return JObject.FromObject(obj);
+        }
+
         public static string Serialize(object obj)
         {
             string res;

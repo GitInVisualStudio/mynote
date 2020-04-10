@@ -137,6 +137,7 @@ namespace MyNoteBase.Classes
             this.icon = icon;
             this.canvasses = new List<Canvas>();
             this.semester = s;
+            this.semester.Courses.Add(this);
             this.localID = Globals.GetLocalID("k_" + name, created);
             this.onlineID = 0;
             this.semesterLocalID = semester.LocalID;

@@ -49,7 +49,10 @@ namespace MyNote
             InitializeComponent();
 
             this.s = new Semester("Q2", DateTime.Now);
-            this.k = new Course("名前?", DateTime.Now, Color.Red, new MyNoteBase.Utils.Graphic.Icon("Heft", new Bitmap(32, 32), 1), s);
+            this.k = new Course("new name", DateTime.Now, Color.Red, new MyNoteBase.Utils.Graphic.Icon("Heft", new Bitmap(32, 32), 1), s)
+            {
+                OnlineID = 30
+            };
             this.c = new Note(DateTime.Now, "als wir noch unterricht hatten lol", k, new TestIManager());
         }
 
@@ -102,7 +105,7 @@ namespace MyNote
         private Canvas c;
         private async Task TestAPI()
         {
-            await manager.Test().ConfigureAwait(false);
+            await manager.Test(k).ConfigureAwait(false);
         }
     }
 }

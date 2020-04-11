@@ -225,9 +225,57 @@ namespace MyNoteBase.Utils.API
             await PostReturnJson("setCanvasPublic.php", json);
         }
 
-        public async Task Test()
+        public async Task<int[]> GetCourseCanvasIDs(int courseID)
         {
-            await SetCanvasPublic(25, true);
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["courseID"] = courseID;
+            JObject jsonResult = await PostReturnJson("getCourseCanvasIDs.php", json);
+            int[] ids = new int[jsonResult["ids"].Count()];
+            for (int i = 0; i < ids.Length; i++)
+                ids[i] = jsonResult["ids"][i].ToObject<int>();
+            return ids;
+        }
+
+        public async Task<int[]> GetOwnCanvasIDs()
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            JObject resultJson = await PostReturnJson("getOwnCanvasIDs.php", json);
+            int[] ids = new int[resultJson["ids"].Count()];
+            for (int i = 0; i < ids.Length; i++)
+                ids[i] = resultJson["ids"][i].ToObject<int>();
+            return ids;
+        }
+
+        public async Task<Canvas> GetCanvas(int canvasID, IManager manager)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["canvasID"] = canvasID;
+            JObject resultJson = await PostReturnJson("getCanvas.php", json);
+            string type = resultJson["canvas"]["type"].ToString();
+            Type t = StringToType(type);
+            return (Canvas)t.GetConstructor(new Type[] { typeof(JObject), typeof(IManager) }).Invoke(new object[] { resultJson["canvas"].ToObject<JObject>(), manager });
+        }
+
+        private Type StringToType(string t)
+        {
+            switch (t)
+            {
+                case "Note":
+                    return typeof(Note);
+                case "VocabularyListing":
+                    return typeof(VocabularyListing);
+                case "Excercise":
+                    return typeof(Excercise);
+            }
+            return null;
+        }
+
+        public async Task Test(Course c)
+        {
+            await UploadCourse(c);
         }
     }
 }

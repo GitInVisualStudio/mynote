@@ -60,13 +60,41 @@ function main(array $post) : array {
     else if (sizeof($result) > 1)
         throw new ServerException(); // two semesters with same id existed (shouldn't happen)
 
-    $result = $connection->select("course", ["user_id"], "`id` = '{$course_id}'");
+    $result = $connection->select("course", [], "`id` = '{$course_id}'");
     if (sizeof($result) > 0) {
         $result = $result[0];
-        $existing_user_id = $result["user_id"];
-        if ($existing_user_id != $user_id)
+        $cur_course_name = $result["name"];
+        $cur_color = $result["color"];
+        $cur_icon_id = $result["icon_id"];
+
+        $result = $connection->select("user_in_course", ["admin", "interpretation_id"], "`user_id` = '{$user_id}' AND `course_id` = '{$course_id}'");
+        if (sizeof($result) === 0)
             throw new InsufficientPermissionsException(); // user tried to update course that wasn't theirs
-        $connection->query("UPDATE `course` SET `name` = '{$course_name}', `created` = '{$course_created}', `semester_id` = '{$semester_id}', `color` = '{$course_color}', `icon_id` = '{$icon_id}' WHERE `id` = {$course_id}");
+        $result = $result[0];
+        $admin = $result["admin"] == 1 ? true : false;
+        $interpretation_id = $result["interpretation_id"];
+        if ($admin)
+            $connection->query("UPDATE `course` SET `name` = '{$course_name}', `created` = '{$course_created}', `semester_id` = '{$semester_id}', `color` = '{$course_color}', `icon_id` = '{$icon_id}' WHERE `id` = {$course_id}");
+        else {
+            $values = [];
+            if ($cur_course_name != $course_name)
+                $values[] = "`name` = '{$course_name}'";
+            if ($cur_color != $course_color)
+                $values[] = "`color` = '{$course_color}'";
+            if ($cur_icon_id != $icon_id)
+                $values[] = "`icon_id` = '{$icon_id}'";
+
+            if (sizeof($values) === 0)
+                return ["result" => "ok", "courseID" => $course_id];
+            $valuesStr = implode(", ", $values);
+            if ($interpretation_id != null)
+                $connection->query("UPDATE `interpretation` SET {$valuesStr}");
+            else {
+                $connection->query("INSERT INTO `interpretation` SET {$valuesStr}");
+                $id = $connection->lastInsertID();
+                $connection->query("UPDATE `user_in_course` SET interpretation_id = '{$id}' WHERE `user_id` = '{$user_id}' AND `course_id` = '{$course_id}'");
+            }
+        }
         $result = ["result" => "ok", "courseID" => $course_id];
     } else {
         $rows = [];
@@ -77,7 +105,7 @@ function main(array $post) : array {
         $course_id = $ids[0];
 
         $rows = [];
-        $rows[] = ["user_id" => $user_id, "course_id" => $course_id, "admin" => true];
+        $rows[] = ["user_id" => $user_id, "course_id" => $course_id, "admin" => true, "member_since" => "NOW()"];
         $connection->insert("user_in_course", $rows);
 
         $result = ["result" => "ok", "courseID" => $course_id];

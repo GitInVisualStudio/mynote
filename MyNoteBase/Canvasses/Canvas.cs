@@ -42,7 +42,17 @@ namespace MyNoteBase.Canvasses
             }
         }
 
-        public Course Course { get => course; set => course = value; }
+        public Course Course
+        {
+            get => course;
+            set
+            {
+                course = value;
+                courseLocalID = course.LocalID;
+                courseOnlineID = course.OnlineID;
+                course.Canvasses.Add(this);
+            }
+        }
 
         public DateTime Dt
         {
@@ -82,9 +92,17 @@ namespace MyNoteBase.Canvasses
             this.dt = json["dt"].ToObject<DateTime>();
             this.name = json["name"].ToObject<string>();
             this.onlineID = json["onlineID"].ToObject<int>();
-            this.localID = json["localID"].ToObject<string>();
+            if (!(json.ContainsKey("localID") && json.ContainsKey("courseLocalID"))) {
+                this.localID = GetLocalID();
+                this.courseLocalID = "";
+            } 
+            else
+            {
+                this.localID = json["localID"].ToObject<string>();
+                this.courseLocalID = json["courseLocalID"].ToObject<string>();
+            }
+            
             this.courseOnlineID = json["courseOnlineID"].ToObject<int>();
-            this.courseLocalID = json["courseLocalID"].ToObject<string>();
             JsonSerializer serializer = new JsonSerializer();
             serializer.Converters.Add(new Utils.IO.ImageConverter());
             this.manager.SetImage(json["pixels"].ToObject<Image>(serializer));
@@ -98,11 +116,16 @@ namespace MyNoteBase.Canvasses
             this.course = course;
             this.course.Canvasses.Add(this);
             this.manager = manager;
-            this.localID = Globals.GetLocalID("c_" + name, dt);
+            this.localID = GetLocalID();
             this.onlineID = 0;
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;
             this.type = GetType().Name;
+        }
+
+        private string GetLocalID()
+        {
+            return Globals.GetLocalID("c_" + name, dt);
         }
 
         public void PrepareForSerialization()

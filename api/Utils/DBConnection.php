@@ -40,13 +40,13 @@ class DBConnection
         return $this->query($query);
     }
 
-    function insert(string $table, array $rows) : array {
+    function insert(string $table, array $rows, string $extras = "") : array {
         if (empty($rows))
             return [];
         $cols = array_keys($rows[0]);
         $colsStr = "(" . $this->makeArraySqlReady($cols, "`") . ")";
         $rowsStr = $this->makeMultidimArraySqlReady($rows);
-        $query = "INSERT INTO `{$table}` {$colsStr} VALUES {$rowsStr}";
+        $query = "INSERT INTO `{$table}` {$colsStr} VALUES {$rowsStr} {$extras}";
         $this->query($query);
         $start_id = $this->connection->insert_id;
         $end_id = $start_id + sizeof($rows) - 1;
@@ -73,6 +73,10 @@ class DBConnection
         if ($str == "NOW()")
             return $str;
         return $this->connection->real_escape_string($str);
+    }
+
+    function lastInsertID() : int {
+        return $this->connection->insert_id;
     }
 }
 

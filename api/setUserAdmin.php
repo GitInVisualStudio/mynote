@@ -22,7 +22,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) {
 
 function main(array $post): array
 {
-    $connection = new DBConnection("127.0.0.1", "root", "", "mynote");
+    $connection = Globals::GetDBConnection();
 
     if (!(array_key_exists("auth", $post) && array_key_exists("userID", $post) && array_key_exists("courseID", $post) && array_key_exists("admin", $post)))
         throw new MissingParameterException();

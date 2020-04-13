@@ -1,8 +1,11 @@
 <?php
+require_once("DBConnection.php");
+
 
 class Globals
 {
     const savePath = "saves/";
+    private static $dbConnection = null;
 
     static function dateTimeNow() : string {
         return date("Y-m-d H:i:s", time());
@@ -63,6 +66,12 @@ class Globals
                 break;
         }
         return -1;
+    }
+
+    static function GetDBConnection() : DBConnection {
+        if (Globals::$dbConnection == null)
+            Globals::$dbConnection = new DBConnection("127.0.0.1", "root", "", "mynote");
+        return Globals::$dbConnection;
     }
 }
 

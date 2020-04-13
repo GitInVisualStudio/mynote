@@ -252,22 +252,8 @@ namespace MyNoteBase.Utils.API
             json["canvasID"] = canvasID;
             JObject resultJson = await PostReturnJson("getCanvas.php", json);
             string type = resultJson["canvas"]["type"].ToString();
-            Type t = StringToType(type);
+            Type t = Globals.StringToType(type);
             return (Canvas)t.GetConstructor(new Type[] { typeof(JObject), typeof(IManager) }).Invoke(new object[] { resultJson["canvas"].ToObject<JObject>(), manager });
-        }
-
-        private Type StringToType(string t)
-        {
-            switch (t)
-            {
-                case "Note":
-                    return typeof(Note);
-                case "VocabularyListing":
-                    return typeof(VocabularyListing);
-                case "Excercise":
-                    return typeof(Excercise);
-            }
-            return null;
         }
 
         public async Task<int> UploadTest(Test t)
@@ -415,11 +401,6 @@ namespace MyNoteBase.Utils.API
             JObject resultJson = await PostReturnJson("getTest.php", json).ConfigureAwait(false);
             Test t = new Test(resultJson["test"].ToObject<JObject>());
             return t;
-        }
-
-        public async Task Test(Course c)
-        {
-            await GetCourseTests(c).ConfigureAwait(false);
         }
     }
 }

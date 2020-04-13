@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyNoteBase.Canvasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -33,6 +34,20 @@ namespace MyNoteBase.Utils
         public static byte[] Decode(string str)
         {
             return Encoding.GetBytes(str);
+        }
+
+        public static Type StringToType(string t)
+        {
+            switch (t)
+            {
+                case "Note":
+                    return typeof(Note);
+                case "VocabularyListing":
+                    return typeof(VocabularyListing);
+                case "Excercise":
+                    return typeof(Excercise);
+            }
+            return null;
         }
     }
 }

@@ -94,6 +94,7 @@ namespace MyNoteBase.Classes
                 semester = value;
                 this.semesterLocalID = semester.LocalID;
                 this.semesterOnlineID = semester.OnlineID;
+                semester.Courses.Add(this);
             }
         }
 
@@ -136,7 +137,7 @@ namespace MyNoteBase.Classes
             this.onlineID = json["onlineID"].ToObject<int>();
             this.semesterOnlineID = json["semesterOnlineID"].ToObject<int>();
             this.created = json["created"].ToObject<DateTime>();
-            if (!(json.ContainsKey("localID") && json.ContainsKey("courseLocalID")))
+            if (!(json.ContainsKey("localID") && json.ContainsKey("semesterLocalID")))
             {
                 this.localID = GetLocalID();
                 this.semesterLocalID = "";
@@ -144,7 +145,7 @@ namespace MyNoteBase.Classes
             else
             {
                 this.localID = json["localID"].ToObject<string>();
-                this.semesterLocalID = json["courseLocalID"].ToObject<string>();
+                this.semesterLocalID = json["semesterLocalID"].ToObject<string>();
             }
 
             this.testLocalIDs = json["testLocalIDs"].ToObject<List<string>>();
@@ -159,8 +160,7 @@ namespace MyNoteBase.Classes
             this.color = color;
             this.icon = icon;
             this.canvasses = new List<Canvas>();
-            this.semester = s;
-            this.semester.Courses.Add(this);
+            this.Semester = s;
             this.localID = GetLocalID();
             this.onlineID = 0;
             this.semesterLocalID = semester.LocalID;

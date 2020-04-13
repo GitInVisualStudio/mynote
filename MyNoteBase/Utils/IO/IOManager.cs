@@ -35,7 +35,7 @@ namespace MyNoteBase.Utils.IO
             try
             {
                 JObject json = Serializer.Deserialize(sl.Load(path));
-                Type t = json["type"].ToObject<Type>();
+                Type t = Globals.StringToType(json["type"].ToString());
                 c = (Canvas)t.GetConstructor(new Type[] { typeof(JObject), typeof(IManager) }).Invoke(new object[] { json, manager });
             }
             catch
@@ -48,7 +48,6 @@ namespace MyNoteBase.Utils.IO
             else
                 c.Course = LoadCourseByID(c.CourseLocalID);
 
-            c.Course.Canvasses.Add(c);
             return c;
         }
 
@@ -76,8 +75,6 @@ namespace MyNoteBase.Utils.IO
                 c.Semester = loadedSemesters[c.SemesterLocalID];
             else
                 c.Semester = LoadSemesterByID(c.SemesterLocalID);
-
-            c.Semester.Courses.Add(c);
             return c;
         }
 

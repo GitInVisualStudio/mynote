@@ -1,7 +1,9 @@
 ﻿using MyNoteBase.Canvasses;
 using MyNoteBase.Classes;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,7 +13,8 @@ namespace MyNoteBase.Utils.IO
 {
     public class IOManager
     {
-        private string savePath;
+        private static string userSavePath;
+        private string appSavePath;
 
         private ISaveLoader sl;
         private Dictionary<string, Semester> loadedSemesters;
@@ -22,7 +25,8 @@ namespace MyNoteBase.Utils.IO
             this.sl = sl;
             loadedSemesters = new Dictionary<string, Semester>();
             loadedCourses = new Dictionary<string, Course>();
-            savePath = "D:\\KurzerAufenthalt\\Mynote\\saves" + Path.DirectorySeparatorChar.ToString();
+            userSavePath = "userSaves" + Path.DirectorySeparatorChar.ToString();
+            appSavePath = "saves" + Path.DirectorySeparatorChar.ToString();
         }
         
         public Canvas LoadCanvas(string path, IManager manager)
@@ -30,21 +34,26 @@ namespace MyNoteBase.Utils.IO
             Canvas c;
             try
             {
-                c = (Canvas)sl.Load(path);
-                c.InitAfterDeserialization(manager);
+                JObject json = Serializer.Deserialize(sl.Load(path));
+                Type t = Globals.StringToType(json["type"].ToString());
+                c = (Canvas)t.GetConstructor(new Type[] { typeof(JObject), typeof(IManager) }).Invoke(new object[] { json, manager });
             }
             catch
             {
                 return null;
             }
 
-            if (loadedCourses.ContainsKey(c.CourseFilePath))
-                c.Course = loadedCourses[c.CourseFilePath];
+            if (loadedCourses.ContainsKey(c.CourseLocalID))
+                c.Course = loadedCourses[c.CourseLocalID];
             else
-                c.Course = LoadCourse(c.CourseFilePath);
+                c.Course = LoadCourseByID(c.CourseLocalID);
 
-            c.Course.Canvasses.Add(c);
             return c;
+        }
+
+        public Course LoadCourseByID(string localID)
+        {
+            return LoadCourse(appSavePath + localID + ".myk");
         }
 
         public Course LoadCourse(string path)
@@ -52,30 +61,58 @@ namespace MyNoteBase.Utils.IO
             Course c;
             try
             {
-                c = (Course)sl.Load(path);
-                c.InitAfterDeserialization();
+                c = new Course(Serializer.Deserialize(sl.Load(path)));
+                loadedCourses.Add(c.LocalID, c);
+                foreach (string id in c.TestLocalIDs)
+                    LoadTestByID(id);
             }
             catch
             {
                 return null;
             }
 
-            if (loadedSemesters.ContainsKey(c.SemesterFilePath))
-                c.Semester = loadedSemesters[c.SemesterFilePath];
+            if (loadedSemesters.ContainsKey(c.SemesterLocalID))
+                c.Semester = loadedSemesters[c.SemesterLocalID];
             else
-                c.Semester = LoadSemester(c.SemesterFilePath);
-
-            c.Semester.Courses.Add(c);
+                c.Semester = LoadSemesterByID(c.SemesterLocalID);
             return c;
+        }
+
+        public Semester LoadSemesterByID(string localID)
+        {
+            return LoadSemester(appSavePath + localID + ".mys");
         }
 
         public Semester LoadSemester(string path)
         {
             try
             {
-                Semester s = (Semester)sl.Load(path);
-                s.InitAfterDeserialization();
+                Semester s = new Semester(Serializer.Deserialize(sl.Load(path)));
+                loadedSemesters.Add(s.LocalID, s);
                 return s;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public Test LoadTestByID(string localID)
+        {
+            return LoadTest(appSavePath + localID + "myt");
+        }
+
+        public Test LoadTest(string path)
+        {
+            try
+            {
+                Test t = new Test(Serializer.Deserialize(sl.Load(path)));
+                if (loadedCourses.ContainsKey(t.CourseLocalID))
+                    t.Course = loadedCourses[t.CourseLocalID];
+                else
+                    t.Course = LoadCourseByID(t.CourseLocalID);
+                t.Course.Tests.Add(t);
+                return t;
             }
             catch
             {
@@ -85,28 +122,49 @@ namespace MyNoteBase.Utils.IO
 
         public string SaveCanvas(Canvas c)
         {
-            string coursePath = SaveCourse(c.Course);
-            c.CourseFilePath = coursePath;
-            string fileExtension = ".my" + c.GetType().Name[0];
-            string path = savePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + fileExtension;
-            sl.Save(path, c);
+            SaveCourse(c.Course);
+            c.PrepareForSerialization();
+            string fileExtension = ".myn";
+            string path = userSavePath + c.Course.Semester.Name + Path.DirectorySeparatorChar + c.Course.Name + Path.DirectorySeparatorChar + c.Name + fileExtension;
+            sl.Save(path, Serializer.Serialize(c));
             return path;
         }
 
         public string SaveCourse(Course c)
         {
-            string semesterPath = SaveSemester(c.Semester);
-            c.SemesterFilePath = semesterPath;
-            string path = savePath + c.Semester.Name + Path.DirectorySeparatorChar + c.Name + Path.DirectorySeparatorChar + "course.myk";
-            sl.Save(path, c);
+            SaveSemester(c.Semester);
+            c.PrepareForSerialization();
+            string path = appSavePath + c.LocalID + ".myk";
+            sl.Save(path, Serializer.Serialize(c));
+            foreach (Test t in c.Tests)
+                SaveTest(t);
             return path;
         }
 
         public string SaveSemester(Semester s)
         {
-            string path = savePath + s.Name + Path.DirectorySeparatorChar + "semester.mys";
-            sl.Save(path, s);
+            string path = appSavePath + s.LocalID + ".mys";
+            sl.Save(path, Serializer.Serialize(s));
             return path;
+        }
+
+        public string SaveTest(Test t)
+        {
+            string path = appSavePath + t.LocalID + ".myt";
+            sl.Save(path, Serializer.Serialize(t));
+            return path;
+        }
+
+        public void SaveGlobals()
+        {
+            GlobalsInstancing instance = new GlobalsInstancing();
+            sl.Save(appSavePath + "globals.cfg", Serializer.Serialize(instance));
+        }
+
+        public void LoadGlobals()
+        {
+            GlobalsInstancing instance = new GlobalsInstancing(Serializer.Deserialize(sl.Load(appSavePath + "globals.cfg")));
+            Globals.InitFromInstance(instance);
         }
     }
 }

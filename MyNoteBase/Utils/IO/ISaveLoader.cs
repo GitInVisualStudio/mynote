@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace MyNoteBase.Utils.IO
 {
     /// <summary>
-    /// Interface for (de-)serializing as binary and saving/loading to a file
+    /// Interface for saving/loading a serialized object to a file
     /// </summary>
     public interface ISaveLoader
     {
-        void Save(string path, object obj);
-        object Load(string path);
+        void Save(string path, string obj);
+        string Load(string path);
     }
 }

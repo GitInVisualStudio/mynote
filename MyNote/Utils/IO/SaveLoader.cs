@@ -1,4 +1,5 @@
-﻿using MyNoteBase.Utils.IO;
+﻿using MyNoteBase.Utils;
+using MyNoteBase.Utils.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,20 +13,18 @@ namespace MyNote.Utils.IO
 {
     public class SaveLoader : ISaveLoader
     {
-        public object Load(string path)
+        public string Load(string path)
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            using (FileStream stream = new FileStream(path, FileMode.Open))
-                return bf.Deserialize(stream);
+            return File.ReadAllText(path);
         }
 
-        public void Save(string path, object obj)
+        public void Save(string path, string obj)
         {
             if (!Directory.Exists(Path.GetDirectoryName(path)))
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
-            BinaryFormatter bf = new BinaryFormatter();
+            byte[] bytes = Globals.Decode(obj);
             using (FileStream stream = new FileStream(path, FileMode.Create))
-                bf.Serialize(stream, obj);
+                stream.Write(bytes, 0, bytes.Length);
         }
     }
 }

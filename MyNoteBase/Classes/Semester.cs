@@ -44,8 +44,12 @@ namespace MyNoteBase.Classes
 
         public Semester(JObject json)
         {
-            this.name = json["name"].ToString();
-            this.localID = json["localID"].ToObject<string>();
+            this.name = json["name"].ToObject<string>();
+            this.created = json["created"].ToObject<DateTime>();
+            if (!json.ContainsKey("localID"))
+                this.localID = GetLocalID();
+            else
+                this.localID = json["localID"].ToObject<string>();
             this.onlineID = json["onlineID"].ToObject<int>();
             this.courses = new List<Course>();
         }
@@ -55,8 +59,13 @@ namespace MyNoteBase.Classes
             this.name = name;
             this.created = created;
             this.courses = new List<Course>();
-            localID = Globals.GetLocalID("s_" + name, created);
+            localID = GetLocalID();
             onlineID = 0;
+        }
+
+        private string GetLocalID()
+        {
+            return Globals.GetLocalID("s_" + name, created);
         }
     }
 }

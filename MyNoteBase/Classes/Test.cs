@@ -24,7 +24,17 @@ namespace MyNoteBase.Classes
 
         public DateTime Date { get => date; set => date = value; }
         public string Topic { get => topic; set => topic = value; }
-        public Course Course { get => course; set => course = value; }
+        public Course Course
+        {
+            get => course;
+            set
+            {
+                course = value;
+                this.courseLocalID = course.LocalID;
+                this.courseOnlineID = course.OnlineID;
+                course.Tests.Add(this);
+            }
+        }
         public TestType Type { get => type; set => type = value; }
         public int CourseOnlineID { get => courseOnlineID; set => courseOnlineID = value; }
         public string CourseLocalID { get => courseLocalID; set => courseLocalID = value; }
@@ -36,8 +46,16 @@ namespace MyNoteBase.Classes
             this.date = json["date"].ToObject<DateTime>();
             this.topic = json["topic"].ToObject<string>();
             this.onlineID = json["onlineID"].ToObject<int>();
-            this.localID = json["localID"].ToObject<string>();
-            this.courseLocalID = json["courseLocalID"].ToObject<string>();
+            if (!(json.ContainsKey("localID") && json.ContainsKey("courseLocalID")))
+            {
+                this.localID = GetLocalID();
+                this.CourseLocalID = "";
+            }
+            else
+            {
+                this.localID = json["localID"].ToObject<string>();
+                this.courseLocalID = json["courseLocalID"].ToObject<string>();
+            }
             this.courseOnlineID = json["courseOnlineID"].ToObject<int>();
             this.type = json["type"].ToObject<TestType>();
         }
@@ -49,10 +67,15 @@ namespace MyNoteBase.Classes
             this.topic = topic;
             this.type = type;
             this.onlineID = 0;
-            this.localID = Globals.GetLocalID("t_" + course.Name + topic, date);
+            this.localID = GetLocalID();
             course.Tests.Add(this);
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;
+        }
+
+        private string GetLocalID()
+        {
+            return Globals.GetLocalID("t_" + topic, date);
         }
     }
 }

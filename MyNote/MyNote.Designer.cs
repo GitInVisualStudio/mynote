@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.btnTest = new System.Windows.Forms.Button();
-            this.lbTest = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnTest
@@ -42,33 +41,21 @@
             this.btnTest.UseVisualStyleBackColor = true;
             this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
             // 
-            // lbTest
-            // 
-            this.lbTest.AutoSize = true;
-            this.lbTest.Location = new System.Drawing.Point(13, 43);
-            this.lbTest.Name = "lbTest";
-            this.lbTest.Size = new System.Drawing.Size(35, 26);
-            this.lbTest.TabIndex = 1;
-            this.lbTest.Text = "label1\r\nding";
-            // 
             // MyNote
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.lbTest);
             this.Controls.Add(this.btnTest);
             this.Name = "MyNote";
             this.Text = "Form1";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Button btnTest;
-        private System.Windows.Forms.Label lbTest;
     }
 }
 

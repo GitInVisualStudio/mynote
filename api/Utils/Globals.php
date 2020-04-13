@@ -34,5 +34,35 @@ class Globals
     static function hashAndSalt(string $password, int $salt) : string {
         return hash("sha256", $password . $salt);
     }
+
+    static function intToTestType(int $t) : string {
+        switch ($t) {
+            case 0:
+                return "exam";
+                break;
+            case 1:
+                return "vocabulary_test";
+                break;
+            case 2:
+                return "test";
+                break;
+        }
+        return "";
+    }
+
+    static function testTypeToInt(string $type) : int {
+        switch ($type) {
+            case "exam":
+                return 0;
+                break;
+            case "vocabulary_test":
+                return 1;
+                break;
+            case "test":
+                return 2;
+                break;
+        }
+        return -1;
+    }
 }
 

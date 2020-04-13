@@ -51,7 +51,7 @@ namespace MyNote
             this.s = new Semester("Q2", DateTime.Now);
             this.k = new Course("new name", DateTime.Now, Color.Red, new MyNoteBase.Utils.Graphic.Icon("Heft", new Bitmap(32, 32), 1), s)
             {
-                OnlineID = 30
+                OnlineID = 29
             };
             this.c = new Note(DateTime.Now, "als wir noch unterricht hatten lol", k, new TestIManager());
         }
@@ -96,15 +96,17 @@ namespace MyNote
 
         private void btnTest_Click(object sender, EventArgs e) // DEBUG
         {
-            TestAPI().ConfigureAwait(false);
+            TestAPI().Wait();
         }
 
         private APIManager manager = new APIManager("test", "");
         private Semester s;
         private Course k;
         private Canvas c;
+        private Test t;
         private async Task TestAPI()
         {
+            //await manager.UploadTest(t).ConfigureAwait(false);
             await manager.Test(k).ConfigureAwait(false);
         }
     }

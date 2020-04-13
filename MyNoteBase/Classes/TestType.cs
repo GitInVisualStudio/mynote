@@ -9,6 +9,7 @@ namespace MyNoteBase.Classes
     public enum TestType
     {
         Exam = 0,
-        VocabularyTest = 1
+        VocabularyTest = 1,
+        Test = 2
     }
 }

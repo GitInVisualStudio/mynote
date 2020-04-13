@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS `mynote`.`test`(
 	`course_id` BIGINT NOT NULL,
 	`topic` VARCHAR(256) NULL,
 	`date` DATE NOT NULL,
+	`type` ENUM("vocabulary_test", "exam", "test") NOT NULL,
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`user_id`) REFERENCES `mynote`.`user`(`id`) ON DELETE SET NULL ON UPDATE CASCADE,
 	FOREIGN KEY (`course_id`) REFERENCES `mynote`.`course`(`id`) ON DELETE CASCADE ON UPDATE CASCADE

@@ -47,7 +47,7 @@ namespace MyNoteBase.Utils.API
             StringContent content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Post, uri);
             message.Content = content;
-            HttpResponseMessage response = await client.SendAsync(message);
+            HttpResponseMessage response = await client.SendAsync(message).ConfigureAwait(false);
             return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
@@ -93,6 +93,8 @@ namespace MyNoteBase.Utils.API
             json["course"] = Serializer.SerializeToJson(c);
             JObject resultJson = await PostReturnJson("uploadCourse.php", json).ConfigureAwait(false);
             c.OnlineID = resultJson["courseID"].ToObject<int>();
+            foreach (Test t in c.Tests)
+                await UploadTest(t);
             return c.OnlineID;
         }
 
@@ -115,7 +117,7 @@ namespace MyNoteBase.Utils.API
             c.OnlineID = 0;
         }
 
-        public async Task DeleteCanvas(int canvasID)
+        private async Task DeleteCanvas(int canvasID)
         {
             JObject json = new JObject();
             json["auth"] = auth;
@@ -130,7 +132,7 @@ namespace MyNoteBase.Utils.API
             await SetCoursePassword(c.OnlineID, password);
         }
 
-        public async Task SetCoursePassword(int courseID, string password)
+        private async Task SetCoursePassword(int courseID, string password)
         {
             JObject json = new JObject();
             json["auth"] = auth;
@@ -163,11 +165,6 @@ namespace MyNoteBase.Utils.API
             json["userID"] = userID;
             JObject resultJson = await PostReturnJson("getUsername.php", json);
             return resultJson["username"].ToString();
-        }
-
-        public async Task<bool> UserIsAdmin(Course c, int userID)
-        {
-            return await UserIsAdmin(c.OnlineID, userID);
         }
 
         public async Task<bool> UserIsAdmin(int courseID, int userID)
@@ -207,7 +204,7 @@ namespace MyNoteBase.Utils.API
             c.SemesterOnlineID = semesterID;
         }
 
-        public async Task MoveCourseToSemester(int courseID, int semesterID)
+        private async Task MoveCourseToSemester(int courseID, int semesterID)
         {
             JObject json = new JObject();
             json["auth"] = auth;
@@ -230,10 +227,10 @@ namespace MyNoteBase.Utils.API
             JObject json = new JObject();
             json["auth"] = auth;
             json["courseID"] = courseID;
-            JObject jsonResult = await PostReturnJson("getCourseCanvasIDs.php", json);
-            int[] ids = new int[jsonResult["ids"].Count()];
+            JObject resultJson = await PostReturnJson("getCourseCanvasIDs.php", json);
+            int[] ids = new int[resultJson["ids"].Count()];
             for (int i = 0; i < ids.Length; i++)
-                ids[i] = jsonResult["ids"][i].ToObject<int>();
+                ids[i] = resultJson["ids"][i].ToObject<int>();
             return ids;
         }
 
@@ -273,9 +270,156 @@ namespace MyNoteBase.Utils.API
             return null;
         }
 
+        public async Task<int> UploadTest(Test t)
+        {
+            if (t.CourseOnlineID == 0)
+                await UploadCourse(t.Course);
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["test"] = Serializer.SerializeToJson(t);
+            JObject resultJson = await PostReturnJson("uploadTest.php", json).ConfigureAwait(false);
+            t.OnlineID = resultJson["testID"].ToObject<int>();
+            return t.OnlineID;
+        }
+
+        public async Task DeleteTest(int testID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["testID"] = testID;
+            await PostReturnJson("deleteTest.php", json);
+        }
+
+        public async Task<Graphic.Icon> GetIcon(int iconID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["iconID"] = iconID;
+            JObject resultJson = await PostReturnJson("getIcon.php", json).ConfigureAwait(false);
+            Graphic.Icon icon = new Utils.Graphic.Icon(resultJson["icon"].ToObject<JObject>());
+            return icon;
+        }
+
+        public async Task<Graphic.Icon[]> GetAllIcons()
+        {
+            int[] ids = await GetIconIDs().ConfigureAwait(false);
+            Graphic.Icon[] icons = new Graphic.Icon[ids.Length];
+            for (int i = 0; i < icons.Length; i++)
+                icons[i] = await GetIcon(ids[i]).ConfigureAwait(false);
+            return icons;
+        }
+
+        public async Task<int[]> GetCourseIDs()
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            JObject resultJson = await PostReturnJson("getCourseIDs.php", json).ConfigureAwait(false);
+            int[] ids = new int[resultJson["ids"].Count()];
+            for (int i = 0; i < ids.Length; i++)
+                ids[i] = resultJson["ids"][i].ToObject<int>();
+            return ids;
+        }
+
+        public async Task<Course> GetCourse(int courseID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["courseID"] = courseID;
+            JObject resultJson = await PostReturnJson("getCourse.php", json).ConfigureAwait(false);
+            Course c = new Course(resultJson["course"].ToObject<JObject>());
+            return c;
+        }
+
+        public async Task<Course[]> GetCourses()
+        {
+            int[] ids = await GetCourseIDs().ConfigureAwait(false);
+            Course[] courses = new Course[ids.Length];
+            for (int i = 0; i < courses.Length; i++)
+                courses[i] = await GetCourse(ids[i]).ConfigureAwait(false);
+            return courses;
+        }
+
+        public async Task<Semester> GetSemester(int semesterID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["semesterID"] = semesterID;
+            JObject resultJson = await PostReturnJson("getSemester.php", json).ConfigureAwait(false);
+            Semester s = new Semester(resultJson["semester"].ToObject<JObject>());
+            return s;
+        }
+
+        public async Task UninterpretCourse(Course c)
+        {
+            await UninterpretCourse(c.OnlineID).ConfigureAwait(false);
+        }
+
+        public async Task UninterpretCourse(int courseID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["courseID"] = courseID;
+            await PostReturnJson("uninterpretCourse.php", json);
+        }
+
+        public async Task<int[]> GetIconIDs()
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            JObject resultJson = await PostReturnJson("getIconIDs.php", json);
+            int[] ids = new int[resultJson["ids"].Count()];
+            for (int i = 0; i < ids.Length; i++)
+                ids[i] = resultJson["ids"][i].ToObject<int>();
+            return ids;
+        }
+
+        public async Task<int[]> GetCourseTestIDs(Course c)
+        {
+            return await GetCourseTestIDs(c.OnlineID);
+        }
+
+        public async Task<int[]> GetCourseTestIDs(int courseID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["courseID"] = courseID;
+            JObject resultJson = await PostReturnJson("getCourseTestIDs.php", json).ConfigureAwait(false);
+            int[] ids = new int[resultJson["ids"].Count()];
+            for (int i = 0; i < ids.Length; i++)
+                ids[i] = resultJson["ids"][i].ToObject<int>();
+            return ids;
+        }
+
+        public async Task<Test[]> GetCourseTests(Course c)
+        {
+            Test[] tests = await GetCourseTests(c.OnlineID).ConfigureAwait(false);
+            foreach (Test t in tests)
+                t.Course = c;
+            return tests;
+        }
+
+        public async Task<Test[]> GetCourseTests(int courseID)
+        {
+            int[] ids = await GetCourseTestIDs(courseID).ConfigureAwait(false);
+            Test[] tests = new Test[ids.Length];
+            for (int i = 0; i < tests.Length; i++)
+                tests[i] = await GetTest(ids[i]);
+            return tests;
+        }
+
+        public async Task<Test> GetTest(int testID)
+        {
+            JObject json = new JObject();
+            json["auth"] = auth;
+            json["testID"] = testID;
+            JObject resultJson = await PostReturnJson("getTest.php", json).ConfigureAwait(false);
+            Test t = new Test(resultJson["test"].ToObject<JObject>());
+            return t;
+        }
+
         public async Task Test(Course c)
         {
-            await UploadCourse(c);
+            await GetCourseTests(c).ConfigureAwait(false);
         }
     }
 }

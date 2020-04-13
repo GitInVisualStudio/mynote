@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MyNoteBase.Classes;
 using MyNote.Utils.Render;
+using MyNoteBase.Utils.API;
 
 namespace MyNote
 {
@@ -82,7 +83,7 @@ namespace MyNote
         {
             base.OnPaint(e);
 
-            //TODO: StateManager Objekt orientiert??
+            //TODO: StateManager Objekt orientiert // edit von miriam: ja bitte, implementieren von MyNoteBase.Utils.Graphic.IManager danke lg
             shouldUpdate = false;
         }
     }

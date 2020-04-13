@@ -243,5 +243,9 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/.metadata/
+/api/.settings
+/api/.buildpath
+/api/.project
 /.idea
 /api/saves/canvasses

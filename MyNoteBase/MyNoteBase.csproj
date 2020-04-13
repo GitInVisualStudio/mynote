@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -47,18 +50,37 @@
     <Compile Include="Canvasses\VocabularyPair.cs" />
     <Compile Include="Classes\Test.cs" />
     <Compile Include="Classes\TestType.cs" />
+    <Compile Include="Utils\API\APIExceptionManager.cs" />
+    <Compile Include="Utils\API\APIManager.cs" />
+    <Compile Include="Utils\Exceptions\APIException.cs" />
+    <Compile Include="Utils\Exceptions\AuthTokenExpiredException.cs" />
+    <Compile Include="Utils\Exceptions\IllegalOperationException.cs" />
     <Compile Include="Utils\Exceptions\ImageListsNotEqualSizeException.cs" />
+    <Compile Include="Utils\Exceptions\InsufficientPermissionsException.cs" />
+    <Compile Include="Utils\Exceptions\InvalidHigherIDException.cs" />
+    <Compile Include="Utils\Exceptions\MissingParametersException.cs" />
+    <Compile Include="Utils\Exceptions\ObjectDoesntExistException.cs" />
+    <Compile Include="Utils\Exceptions\ServerException.cs" />
+    <Compile Include="Utils\Exceptions\WrongCredentialsException.cs" />
+    <Compile Include="Utils\Exceptions\WrongFormatException.cs" />
+    <Compile Include="Utils\Globals.cs" />
+    <Compile Include="Utils\GlobalsInstancing.cs" />
     <Compile Include="Utils\Graphic\IManager.cs" />
     <Compile Include="Canvasses\Note.cs" />
     <Compile Include="Classes\Course.cs" />
     <Compile Include="Classes\Semester.cs" />
     <Compile Include="Utils\Graphic\Icon.cs" />
+    <Compile Include="Utils\IO\ImageConverter.cs" />
     <Compile Include="Utils\IO\IOManager.cs" />
     <Compile Include="Utils\IO\ISaveLoader.cs" />
+    <Compile Include="Utils\IO\Serializer.cs" />
     <Compile Include="Utils\Math\CRandom.cs" />
     <Compile Include="Utils\Math\MathUtils.cs" />
     <Compile Include="Utils\Math\Vector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

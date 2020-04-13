@@ -1,28 +1,71 @@
-﻿using System;
+﻿using MyNoteBase.Utils;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 
 namespace MyNoteBase.Classes
 {
-    [Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public class Semester
     {
         private string name;
-        [NonSerialized]
+        private DateTime created;
+        [JsonIgnore]
         private List<Course> courses;
+        private string localID;
+        private int onlineID;
 
         public string Name { get => name; set => name = value; }
         public List<Course> Courses { get => courses; set => courses = value; }
-
-        public Semester(string name)
+        public string LocalID 
+        { 
+            get => localID; 
+            private set
+            {
+                localID = value;
+                foreach (Course c in courses)
+                    c.SemesterLocalID = localID;
+            }
+        }
+        public int OnlineID
         {
-            this.name = name;
+            get => onlineID;
+            set
+            {
+                onlineID = value;
+                foreach (Course c in courses)
+                    c.SemesterOnlineID = OnlineID;
+            }
+        }
+
+        public DateTime Created { get => created; set => created = value; }
+
+        public Semester(JObject json)
+        {
+            this.name = json["name"].ToObject<string>();
+            this.created = json["created"].ToObject<DateTime>();
+            if (!json.ContainsKey("localID"))
+                this.localID = GetLocalID();
+            else
+                this.localID = json["localID"].ToObject<string>();
+            this.onlineID = json["onlineID"].ToObject<int>();
             this.courses = new List<Course>();
         }
 
-        public void InitAfterDeserialization()
+        public Semester(string name, DateTime created)
         {
+            this.name = name;
+            this.created = created;
             this.courses = new List<Course>();
+            localID = GetLocalID();
+            onlineID = 0;
+        }
+
+        private string GetLocalID()
+        {
+            return Globals.GetLocalID("s_" + name, created);
         }
     }
 }

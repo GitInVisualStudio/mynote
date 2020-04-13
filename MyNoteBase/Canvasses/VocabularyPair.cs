@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace MyNoteBase.Canvasses
 {
-    [Serializable]
+    [JsonObject(MemberSerialization.Fields)]
     public class VocabularyPair
     {
+        [JsonConverter(typeof(Utils.IO.ImageConverter))]
         private Image one;
+        [JsonConverter(typeof(Utils.IO.ImageConverter))]
         private Image two;
 
         public Image One { get => one; set => one = value; }
@@ -26,6 +30,14 @@ namespace MyNoteBase.Canvasses
                 else
                     throw new IndexOutOfRangeException();
             }
+        }
+
+        public VocabularyPair(JObject json)
+        {
+            JsonSerializer serializer = new JsonSerializer();
+            serializer.Converters.Add(new Utils.IO.ImageConverter());
+            one = json["one"].ToObject<Image>(serializer);
+            two = json["two"].ToObject<Image>(serializer);
         }
 
         public VocabularyPair(Image one, Image two)

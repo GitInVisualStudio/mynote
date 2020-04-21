@@ -40,8 +40,8 @@ namespace MyNote.Utils.Render
             delta = (float)watch.Elapsed.TotalSeconds;
             watch.Reset();
             watch.Start();
-            g.InterpolationMode = InterpolationMode.NearestNeighbor; //Muss ich mit miriam noch besprechen
-            StateManager.g = g;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            SetGraphics(g);
         }
 
         /// <summary>
@@ -78,8 +78,10 @@ namespace MyNote.Utils.Render
 
         public static void DrawImage(Bitmap img, float x, float y, float width, float height, float opacity = 1.0f)
         {
-            ColorMatrix matrix = new ColorMatrix();
-            matrix.Matrix33 = opacity;
+            ColorMatrix matrix = new ColorMatrix
+            {
+                Matrix33 = opacity
+            };
             ImageAttributes attributes = new ImageAttributes();
             attributes.SetColorMatrix(matrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
             g.DrawImage(img, new Rectangle(0, 0, (int)width, (int)height), 0, 0, img.Width, img.Height, GraphicsUnit.Pixel, attributes);
@@ -227,6 +229,7 @@ namespace MyNote.Utils.Render
             Scale(state.ScaleX, state.ScaleY);
             Translate(state.TranslateX, state.TranslateY);
             Rotate(state.Rotation);
+            SetGraphics(state.Graphics);
         }
 
         /// <summary>
@@ -269,6 +272,53 @@ namespace MyNote.Utils.Render
 
         public static void SetColor(Color color) => state.Color = color;
 
+        public static void SetColor(int color)
+        {
+            //8-Bit
+            int a = color >> 24 & 255;
+            int r = color >> 16 & 255;
+            int g = color >> 8 & 255;
+            int b = color & 255;
+            SetColor(r, g, b, a);
+        }
+
         public static void SetFont(Font f) => state.Font = f;
+
+        public static void SetGraphics(Graphics g)
+        {
+            StateManager.g = g;
+            state.Graphics = g;
+        }
+
+        public static void DrawRoundRect(Vector location, Vector size, float r = 10, int res = 100)
+        {
+            PointF[] points = new PointF[res];
+            for(float i = 0, k = 0; i <= 360; i += 360f / (float)res, k++)
+            {
+                float offsetX = r, offsetY = r;
+                if (i <= 180)
+                    offsetX = size.X - r;
+                if (i <= 90 || i >= 270) 
+                    offsetY = size.Y - r;
+                points[(int)k] = new PointF(location.X + MathUtils.Sin(i) * r + offsetX, location.Y + MathUtils.Cos(i) * r  + offsetY);
+            }
+            g.DrawPolygon(new Pen(new SolidBrush(Color)), points);
+        }
+
+        public static void FillRoundRect(Vector location, Vector size, float r = 10, int res = 100)
+        {
+            PointF[] points = new PointF[res];
+            for (float i = 0, k = 0; i <= 360; i += 360f / (float)res, k++)
+            {
+                float offsetX = r, offsetY = r;
+                if (i <= 180)
+                    offsetX = size.X - r;
+                if (i <= 90 || i >= 270)
+                    offsetY = size.Y - r;
+                points[(int)k] = new PointF(location.X + MathUtils.Sin(i) * r + offsetX, location.Y + MathUtils.Cos(i) * r + offsetY);
+            }
+            g.FillPolygon(new SolidBrush(Color), points);
+        }
+
     }
 }

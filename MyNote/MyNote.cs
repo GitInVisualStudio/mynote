@@ -16,6 +16,8 @@ using System.Windows.Forms;
 using MyNoteBase.Classes;
 using MyNote.Utils.Render;
 using MyNote.Gui.Screen;
+using MyNote.Gui.Screens;
+using MyNote.Utils.Math;
 
 namespace MyNote
 {
@@ -27,6 +29,7 @@ namespace MyNote
         private bool shouldUpdate;
         private Thread animationThread;
         private bool opend;
+        private Vector Size => new Vector(Width, Height);
 
         public bool ShouldUpdate
         {
@@ -54,8 +57,10 @@ namespace MyNote
 
         public void Init()
         {
-            timer = new System.Windows.Forms.Timer();
-            timer.Interval = 10000;
+            timer = new System.Windows.Forms.Timer
+            {
+                Interval = 100
+            };
             timer.Start();
             opend = true;
             animationThread = new Thread(() =>
@@ -69,7 +74,8 @@ namespace MyNote
                 }
             });
             animationThread.Start();
-            OpenScreen(new GuiHeader());
+            StateManager.Push();
+            OpenScreen(new GuiStartScreen(Size));
         }
 
         private void AddEvents()
@@ -79,7 +85,13 @@ namespace MyNote
             MouseMove += (object sender, MouseEventArgs e) => currentScreen?.Component_OnMove(new Utils.Math.Vector(e.X, e.Y));
             KeyDown += (object sender, KeyEventArgs args) => currentScreen?.Component_OnKeyPress((char)args.KeyValue);
             KeyUp += (object sender, KeyEventArgs args) => currentScreen?.Component_OnKeyRelease((char)args.KeyValue);
-            Resize += (object sender, EventArgs e) => currentScreen?.Component_OnResize(new Utils.Math.Vector(Width, Height));
+        }
+
+        //Ich liebe WinForms <3
+        protected override void OnResize(EventArgs e)
+        {
+            currentScreen?.Component_OnResize(new Utils.Math.Vector(Width, Height));
+            this.Refresh();
         }
 
         public void OpenScreen(GuiScreen screen)
@@ -104,9 +116,11 @@ namespace MyNote
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+            StateManager.Push();
             StateManager.Update(e.Graphics);
             currentScreen?.OnRender();
-            //TODO: StateManager Objekt orientiert??
+            StateManager.Pop();
+            //TODO: StateManager Objekt orientiert??NEIN
             ShouldUpdate = false;
         }
     }

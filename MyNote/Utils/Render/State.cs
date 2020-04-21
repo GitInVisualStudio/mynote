@@ -17,6 +17,7 @@ namespace MyNote.Utils.Render
         private Font font = new Font("System", 12);
         private float scaleX = 1, scaleY = 1, translateX = 0, translateY = 0;
         private float rotation = 0;
+        private Graphics graphics;
         private State prevState;
 
         public Font Font
@@ -122,6 +123,8 @@ namespace MyNote.Utils.Render
             }
         }
 
+        public Graphics Graphics { get => graphics; set => graphics = value; }
+
         public State(bool createNew = false)
         {
             if (createNew)
@@ -137,6 +140,7 @@ namespace MyNote.Utils.Render
             Rotation = StateManager.Rotation;
             PrevState = StateManager.State;
             color = StateManager.Color;
+            Graphics = StateManager.Graphics;
         }
     }
 }

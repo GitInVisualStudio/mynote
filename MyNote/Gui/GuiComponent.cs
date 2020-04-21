@@ -66,20 +66,23 @@ namespace MyNote.Gui
             return location.X > this.location.X && location.X < this.location.X + size.X && location.Y > this.location.Y && location.Y < this.location.Y + size.Y;
         }
 
-        public GuiComponent(float x, float y, float width, float height)
+        public GuiComponent(float x, float y)
         {
             Location = new Vector(x, y);
-            Size = new Vector(width, height);
+            OnResize += SetLocationAndSize;
         }
 
-        public GuiComponent(Vector location, Vector size)
+        public GuiComponent(Vector location)
         {
             Location = location;
             Size = size;
+            OnResize += SetLocationAndSize;
         }
 
         public abstract void Init();
 
         public abstract void OnRender();
+
+        public abstract void SetLocationAndSize(object sender, Vector screenSize);
     }
 }

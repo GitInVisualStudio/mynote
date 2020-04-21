@@ -13,24 +13,25 @@ namespace MyNote.Gui
         private const float DEFAULT_WIDTH = 100; 
         private const float DEFAULT_HEIGHT = 20;
 
-        public GuiButton(string name) : base(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+        //TODO: den kack mit den Size fixen lol idk wie ich es machen soll
+        public GuiButton(string name) : base(0, 0)
         {
             Name = name;
         }
 
-        public GuiButton(string name, EventHandler<Vector> Click) : base(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+        public GuiButton(string name, EventHandler<Vector> Click) : base(0, 0)
         {
             Name = name;
             OnClick += Click;
         }
 
 
-        public GuiButton(string name, float x, float y) : base(x, y, DEFAULT_WIDTH, DEFAULT_HEIGHT)
+        public GuiButton(string name, float x, float y) : base(x, y)
         {
             Name = name;
         }
 
-        public GuiButton(float x, float y, float width, float height) : base(x, y, width, height)
+        public GuiButton(float x, float y, float width, float height) : base(x, y)
         {
         }
 
@@ -48,6 +49,11 @@ namespace MyNote.Gui
             StateManager.SetColor(FontColor);
             StateManager.DrawRect(Location, Size);
             StateManager.DrawCenteredString(Name, Location + Size / 2);
+        }
+
+        public override void SetLocationAndSize(object sender, Vector screenSize)
+        {
+            
         }
     }
 }

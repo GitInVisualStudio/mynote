@@ -40,7 +40,7 @@ namespace MyNote.Gui
             }
         }
 
-        public GuiScreen(Vector size) : base(default(Vector), size)
+        public GuiScreen(Vector screenSize) : base(default(Vector))
         {
             components = new List<GuiComponent>();
             OnResize += Screen_OnResize;
@@ -49,6 +49,7 @@ namespace MyNote.Gui
             OnRelease += Screen_OnRelease;
             OnKeyPress += Screen_OnKeyPress;
             OnKeyRelease += Screen_OnKeyRelease;
+            SetLocationAndSize(this, screenSize);
         }
 
         private void Screen_OnResize(object sender, Vector e)
@@ -113,12 +114,21 @@ namespace MyNote.Gui
 
         public override void Init()
         {
-            components.ForEach(x => x.Init());
+            components.ForEach(x => 
+            {
+                x.SetLocationAndSize(this, Size);
+                x.Init();
+            });
         }
 
         public override void OnRender()
         {
             components.ForEach(x => x.OnRender());
+        }
+
+        public override void SetLocationAndSize(object sender, Vector screenSize)
+        {
+            Size = screenSize;
         }
     }
 }

@@ -10,6 +10,8 @@ namespace MyNote.Utils.Math
     public class MathUtils
     {
 
+        public const float PI = (float)s::Math.PI;
+
         public static float Sin(float angle) => (float)s::Math.Sin(ToRadians(angle));
         
 

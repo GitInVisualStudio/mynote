@@ -14,7 +14,7 @@ namespace MyNote.Utils.Render
     public class State
     {
         private Color color;
-        private Font font = new Font("System", 12);
+        private Font font = FontUtils.DEFAULT_FONT;
         private float scaleX = 1, scaleY = 1, translateX = 0, translateY = 0;
         private float rotation = 0;
         private Graphics graphics;

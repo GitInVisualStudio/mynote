@@ -290,35 +290,25 @@ namespace MyNote.Utils.Render
             state.Graphics = g;
         }
 
-        public static void DrawRoundRect(Vector location, Vector size, float r = 10, int res = 100)
-        {
-            PointF[] points = new PointF[res];
-            for(float i = 0, k = 0; i <= 360; i += 360f / (float)res, k++)
-            {
-                float offsetX = r, offsetY = r;
-                if (i <= 180)
-                    offsetX = size.X - r;
-                if (i <= 90 || i >= 270) 
-                    offsetY = size.Y - r;
-                points[(int)k] = new PointF(location.X + MathUtils.Sin(i) * r + offsetX, location.Y + MathUtils.Cos(i) * r  + offsetY);
-            }
-            g.DrawPolygon(new Pen(new SolidBrush(Color)), points);
-        }
+        public static void DrawRoundRect(Vector location, Vector size, float r = 10, int res = 100) => g.DrawPolygon(new Pen(new SolidBrush(Color)), GetRoundRectPoints(location.X, location.Y, size.X, size.Y, r, res));
 
-        public static void FillRoundRect(Vector location, Vector size, float r = 10, int res = 100)
+        public static void FillRoundRect(float x, float y, float width, float height, float r = 10, int res = 100) => g.FillPolygon(new SolidBrush(Color), GetRoundRectPoints(x, y, width, height, r, res));
+
+        public static void FillRoundRect(Vector location, Vector size, float r = 10, int res = 100) => FillRoundRect(location.X, location.Y, size.X, size.Y, r, res);
+
+        private static PointF[] GetRoundRectPoints(float x, float y, float width, float height, float r, int res)
         {
             PointF[] points = new PointF[res];
             for (float i = 0, k = 0; i <= 360; i += 360f / (float)res, k++)
             {
                 float offsetX = r, offsetY = r;
                 if (i <= 180)
-                    offsetX = size.X - r;
+                    offsetX = width - r;
                 if (i <= 90 || i >= 270)
-                    offsetY = size.Y - r;
-                points[(int)k] = new PointF(location.X + MathUtils.Sin(i) * r + offsetX, location.Y + MathUtils.Cos(i) * r + offsetY);
+                    offsetY = height - r;
+                points[(int)k] = new PointF(x + MathUtils.Sin(i) * r + offsetX, y + MathUtils.Cos(i) * r + offsetY);
             }
-            g.FillPolygon(new SolidBrush(Color), points);
+            return points;
         }
-
     }
 }

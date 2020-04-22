@@ -11,8 +11,19 @@ namespace MyNote.Gui.Screens
     {
         public GuiStartScreen(Vector size) : base(size)
         {
-            Components.Add(new GuiTable<string>(new Vector(50, 50), "Hallo", "Hallo2", "Hallo3", "YEAHHH"));
-            Components.Add(new GuiTable<string>(new Vector(size.X / 2 + 500, 50), "Hallo1", "Hallo2", "Hallo3", "YEAHHH"));
+            Components.Add(new GuiTable<string>(new Vector(0, 0), "Hallo", "Hallo2", "Hallo3", "YEAHHH")
+            {
+                RWidth = 0.5f,
+                RHeight = 1,
+                Size = new Vector(-50, 0)                
+            });
+            Components.Add(new GuiTable<string>(new Vector(0, 0), "Hallo1", "Hallo2", "Hallo3", "YEAHHH")
+            {
+                RWidth = 0.5f,
+                RHeight = 1,
+                RX = 0.5f
+            });
+            Name = "Start";
         }
     }
 }

@@ -57,9 +57,10 @@ namespace MyNote.Gui
             }
         }
 
-        private void CreateNewBitmap(Vector size)
+        private void CreateNewBitmap()
         {
-            Size = size;
+            if (Size.Length == 0)
+                return;
             table = new Bitmap((int)Size.X, (int)Size.Y);
             DrawTable();
         }
@@ -70,7 +71,7 @@ namespace MyNote.Gui
             StateManager.SetGraphics(Graphics.FromImage(table));
             #region drawingTable
             StateManager.SetColor(Color.Gray);
-            StateManager.FillRect(0, 0, (int)Size.X, (int)Size.Y);
+            StateManager.FillRoundRect(0, 0, (int)Size.X, (int)Size.Y);
             StateManager.SetColor(Color.Black);
             for (int i = 0; i < Length; i++)
             {
@@ -83,22 +84,24 @@ namespace MyNote.Gui
         public void Add(T t)
         {
             list.Add(t);
-            CreateNewBitmap(Size);
+            CreateNewBitmap();
         }
 
         public override void Init()
         {
-            CreateNewBitmap(Size);
+            CreateNewBitmap();
         }
 
         public override void OnRender()
         {
-            StateManager.DrawImage(table, Location.X , Location.Y);
+            if(table != null)
+                StateManager.DrawImage(table, Location.X , Location.Y);
         }
 
         public override void SetLocationAndSize(object sender, Vector screenSize)
         {
-            CreateNewBitmap(new Vector(screenSize.X / 2 - 50, screenSize.Y - 50));
+            base.SetLocationAndSize(sender, screenSize);
+            CreateNewBitmap();
         }
     }
 }

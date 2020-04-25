@@ -40,7 +40,6 @@ namespace MyNote.Utils.Render
             delta = (float)watch.Elapsed.TotalSeconds;
             watch.Reset();
             watch.Start();
-            g.SmoothingMode = SmoothingMode.AntiAlias;
             SetGraphics(g);
         }
 
@@ -288,6 +287,8 @@ namespace MyNote.Utils.Render
         {
             StateManager.g = g;
             state.Graphics = g;
+            if(g != null)
+                g.SmoothingMode = SmoothingMode.AntiAlias;
         }
 
         public static void DrawRoundRect(Vector location, Vector size, float r = 10, int res = 100) => g.DrawPolygon(new Pen(new SolidBrush(Color)), GetRoundRectPoints(location.X, location.Y, size.X, size.Y, r, res));
@@ -299,6 +300,10 @@ namespace MyNote.Utils.Render
         private static PointF[] GetRoundRectPoints(float x, float y, float width, float height, float r, int res)
         {
             PointF[] points = new PointF[res];
+
+            if (height <= 0 || width <= 0)
+                return new PointF[0];
+
             for (float i = 0, k = 0; i <= 360; i += 360f / (float)res, k++)
             {
                 float offsetX = r, offsetY = r;

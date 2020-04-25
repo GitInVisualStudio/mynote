@@ -51,6 +51,7 @@
     <Compile Include="Gui\GuiScreen.cs" />
     <Compile Include="Gui\GuiTable.cs" />
     <Compile Include="Gui\Screens\GuiHeader.cs" />
+    <Compile Include="Gui\Screens\GuiMainScreen.cs" />
     <Compile Include="Gui\Screens\GuiStartScreen.cs" />
     <Compile Include="MyNote.cs">
       <SubType>Form</SubType>

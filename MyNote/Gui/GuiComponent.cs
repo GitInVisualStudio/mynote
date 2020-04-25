@@ -10,17 +10,20 @@ namespace MyNote.Gui
 {
     public abstract class GuiComponent
     {
-        private Vector location = new Vector(0,0);
+        private bool hovering;
+        private Vector prevScreenSize = new Vector(0, 0);
+        private Vector location = new Vector(0, 0);
         private Vector size = new Vector(0,0);
         private string name;
         private bool selected;
-        private Color backColor = Color.Gray;
-        private Color fontColor = Color.Black;
-        private Vector prevScreenSize = new Vector(0,0);
+        private Color backColor;
+        private Color fontColor;
         private float rX = -1, rY = -1, rWidth = -1, rHeight = -1;//Relative Location und Size
         public event EventHandler<Vector> OnResize;
         public event EventHandler<Vector> OnClick;
         public event EventHandler<Vector> OnMove;
+        public event EventHandler<Vector> OnEnter;
+        public event EventHandler<Vector> OnLeave;
         public event EventHandler<Vector> OnRelease;
         public event EventHandler<char> OnKeyPress;
         public event EventHandler<char> OnKeyRelease;
@@ -53,7 +56,7 @@ namespace MyNote.Gui
 
         public string Name { get => name; set => name = value; }
         public bool Selected { get => selected; set => selected = value; }
-        public Color BackColor { get => backColor; set => backColor = value; }
+        public virtual Color BackColor { get => backColor; set => backColor = value; }
         public Color FontColor { get => fontColor; set => fontColor = value; }
         public float RX { get => rX; set => rX = value; }
         public float RY { get => rY; set => rY = value; }
@@ -64,12 +67,22 @@ namespace MyNote.Gui
         public void Component_OnClick(Vector location) => OnClick?.Invoke(this, location);
         public void Component_OnRelease(Vector location) => OnRelease?.Invoke(this, location);
         public void Component_OnMove(Vector location) => OnMove?.Invoke(this, location);
+        public void Component_OnEnter(Vector location) => OnEnter?.Invoke(this, location);
+        public void Component_OnLeave(Vector location) => OnLeave?.Invoke(this, location);
         public void Component_OnKeyPress(char keyChar) => OnKeyPress?.Invoke(this, keyChar);
         public void Component_OnKeyRelease(char keyChar) => OnKeyRelease?.Invoke(this, keyChar);
 
-        public bool OnHover(Vector location)
+        public virtual bool OnHover(Vector location)
         {
-            return location.X > this.location.X && location.X < this.location.X + size.X && location.Y > this.location.Y && location.Y < this.location.Y + size.Y;
+            if(location.X > this.location.X && location.X < this.location.X + size.X && location.Y > this.location.Y && location.Y < this.location.Y + size.Y)
+            {
+                if (hovering == false)
+                    OnEnter?.Invoke(this, location);
+                return hovering = true;
+            }
+            if (hovering == true)
+                OnLeave?.Invoke(this, location);
+            return hovering = false;
         }
 
         /// <summary>
@@ -78,17 +91,12 @@ namespace MyNote.Gui
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        public GuiComponent(float x, float y)
-        {
-            Location = new Vector(x, y);
-            OnResize += SetLocationAndSize;
-        }
+        public GuiComponent(float x, float y) => Location = new Vector(x, y);
 
         public GuiComponent(float x, float y, float width, float height)
         {
             Location = new Vector(x, y);
             Size = new Vector(width, height);
-            OnResize += SetLocationAndSize;
         }
 
         public GuiComponent(double x, double y, double width, double height)
@@ -97,7 +105,6 @@ namespace MyNote.Gui
             RY = (float)y;
             RWidth = (float)width;
             RHeight = (float)height;
-            OnResize += SetLocationAndSize;
         }
 
         public GuiComponent(float x, float y, double width, double height)
@@ -105,7 +112,6 @@ namespace MyNote.Gui
             RWidth = (float)width;
             RHeight = (float)height;
             Location = new Vector(x, y);
-            OnResize += SetLocationAndSize;
         }
 
 
@@ -113,10 +119,20 @@ namespace MyNote.Gui
         {
             Location = location;
             Size = size;
-            OnResize += SetLocationAndSize;
         }
 
-        public abstract void Init();
+        public GuiComponent()
+        {
+
+        }
+
+        public virtual void Init()
+        {
+            OnResize += SetLocationAndSize;
+            BackColor = Color.Gray;
+            FontColor = Color.Black;
+        }
+        
 
         public abstract void OnRender();
 

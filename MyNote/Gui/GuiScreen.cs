@@ -13,6 +13,7 @@ namespace MyNote.Gui
         private List<GuiComponent> components;
         private Animation<float> animation = Animation<float>.GetDefaultAnimation();
         private bool opend;
+        private MyNote myNote;
 
         public List<GuiComponent> Components
         {
@@ -40,16 +41,12 @@ namespace MyNote.Gui
             }
         }
 
-        public GuiScreen(Vector screenSize) : base(default(Vector))
+        public MyNote MyNote { get => myNote; set => myNote = value; }
+
+        public GuiScreen(MyNote myNote) : base()
         {
+            this.MyNote = myNote;
             components = new List<GuiComponent>();
-            OnResize += Screen_OnResize;
-            OnClick += Screen_OnClick;
-            OnMove += Screen_OnMove;
-            OnRelease += Screen_OnRelease;
-            OnKeyPress += Screen_OnKeyPress;
-            OnKeyRelease += Screen_OnKeyRelease;
-            SetLocationAndSize(this, screenSize);
         }
 
         private void Screen_OnResize(object sender, Vector e)
@@ -59,47 +56,66 @@ namespace MyNote.Gui
 
         private void Screen_OnRelease(object sender, Vector e)
         {
-            components.ForEach(x =>
+            for (int i = components.Count - 1; i >= 0; i--)
             {
+                GuiComponent x = components[i];
                 if (x.OnHover(e))
+                {
                     x.Component_OnRelease(e);
-            });
+                    MyNote.Refresh();
+                }
+            };
         }
 
         private void Screen_OnMove(object sender, Vector e)
         {
-            components.ForEach(x =>
+            for (int i = components.Count - 1; i >= 0; i--)
             {
+                GuiComponent x = components[i];
                 if (x.OnHover(e))
+                {
                     x.Component_OnMove(e);
-            });
+                }
+            };
         }
 
         private void Screen_OnClick(object sender, Vector e)
         {
-            components.ForEach(x =>
+            for(int i = components.Count - 1; i >= 0; i--)
             {
+                GuiComponent x = components[i];
                 if (x.OnHover(e))
+                {
                     x.Component_OnClick(e);
-            });
+                    MyNote.Refresh();
+                }
+            };
         }
 
         private void Screen_OnKeyRelease(object sender, char e)
         {
-            components.ForEach(x =>
+            for (int i = components.Count - 1; i >= 0; i--)
             {
+                GuiComponent x = components[i];
                 if (x.Selected)
+                {
                     x.Component_OnKeyRelease(e);
-            });
+                    MyNote.Refresh();
+                }
+            };
         }
 
         private void Screen_OnKeyPress(object sender, char e)
         {
-            components.ForEach(x=>
+            for (int i = components.Count - 1; i >= 0; i--)
             {
+                GuiComponent x = components[i];
                 if (x.Selected)
+                {
                     x.Component_OnKeyPress(e);
-            });
+                    MyNote.Refresh();
+                }
+            };
         }
 
         public void Open()
@@ -114,21 +130,25 @@ namespace MyNote.Gui
 
         public override void Init()
         {
+            base.Init();
+            OnResize += Screen_OnResize;
+            OnClick += Screen_OnClick;
+            OnMove += Screen_OnMove;
+            OnRelease += Screen_OnRelease;
+            OnKeyPress += Screen_OnKeyPress;
+            OnKeyRelease += Screen_OnKeyRelease;
+            SetLocationAndSize(this, myNote.Size);
+
             components.ForEach(x => 
             {
-                x.SetLocationAndSize(this, Size);
                 x.Init();
+                x.SetLocationAndSize(this, MyNote.Size);
             });
         }
 
         public override void OnRender()
         {
             components.ForEach(x => x.OnRender());
-        }
-
-        public override void SetLocationAndSize(object sender, Vector screenSize)
-        {
-            Size = screenSize;
         }
     }
 }

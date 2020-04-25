@@ -22,12 +22,11 @@ namespace MyNote.Utils
                 alive = value;
             }
         }
-
-        public virtual void StartAnimation() => alive = true;
         
-
-        public virtual void StopAnimation() => alive = false;
-        
+        public void StartAnimation()
+        {
+            AnimationManager.AddAnimation(this);
+        }
 
         public virtual void ResetAnimation() => alive = true;
 
@@ -88,7 +87,6 @@ namespace MyNote.Utils
             end = start;
             alive = true;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -106,7 +104,7 @@ namespace MyNote.Utils
         {
             return new Animation<float>(0, 1.0f, (float current, float end) =>
             {
-                return (end - current) * 2;
+                return current += (end - current) * 0.2f;
             });
         }
 

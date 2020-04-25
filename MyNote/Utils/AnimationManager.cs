@@ -19,5 +19,11 @@ namespace MyNote.Utils
                     animations.RemoveAt(i);
             }
         }
+
+        public static void AddAnimation(Animation animation)
+        {
+            animation.Alive = true;
+            animations.Add(animation);
+        }
     }
 }

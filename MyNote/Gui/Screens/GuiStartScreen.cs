@@ -9,21 +9,31 @@ namespace MyNote.Gui.Screens
 {
     public class GuiStartScreen : GuiScreen
     {
-        public GuiStartScreen(Vector size) : base(size)
+        public GuiStartScreen(MyNote myNote) : base(myNote)
         {
-            Components.Add(new GuiTable<string>(new Vector(0, 0), "Hallo", "Hallo2", "Hallo3", "YEAHHH")
+            Components.Add(new GuiTable<string>(new Vector(0, 0), "Mathe", "Deutsch", "IT", "Englisch")
             {
-                RWidth = 0.5f,
-                RHeight = 1,
-                Size = new Vector(-50, 0)                
+                RWidth = 1 / 2f,
+                RHeight = 1f,
+                Size = new Vector(-50, -200),
+                Location = new Vector(50, 100),
+                Name = "Neue Notiz"
             });
-            Components.Add(new GuiTable<string>(new Vector(0, 0), "Hallo1", "Hallo2", "Hallo3", "YEAHHH")
+            Components.Add(new GuiTable<string>(new Vector(0, 0), "Mathe - Algebra", "Deutsch - Heinz", "IT - Projekt")
             {
-                RWidth = 0.5f,
-                RHeight = 1,
-                RX = 0.5f
+                RWidth = 1 / 2f,
+                RHeight = 1f,
+                RX = 1 / 2f,
+                Size = new Vector(-100, -200),
+                Location = new Vector(50, 100),
+                Name = "Zuletzt geöffnet"
             });
             Name = "Start";
+        }
+
+        public override void SetLocationAndSize(object sender, Vector screenSize)
+        {
+            base.SetLocationAndSize(sender, screenSize);
         }
     }
 }

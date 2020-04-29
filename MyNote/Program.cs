@@ -17,8 +17,14 @@ namespace MyNote
         static void Main()
         {
             IOManager manager = new IOManager(new SaveLoader());
-            manager.LoadGlobals();
+            try
+            {   
+                manager.LoadGlobals();
+            }
+            catch
+            {
 
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MyNote());

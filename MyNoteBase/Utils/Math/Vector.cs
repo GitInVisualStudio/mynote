@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace MyNote.Utils.Math
 {
+    [JsonObject(MemberSerialization.Fields)]
     public struct Vector
     {
         //Werte des Vectors in mehreren Dimensionen

@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using MyNoteBase.Classes;
 using MyNote.Utils.Render;
 using MyNoteBase.Utils.API;
+using MyNoteBase.Canvasses.Content;
 
 namespace MyNote
 {
@@ -47,6 +48,14 @@ namespace MyNote
         public MyNote()
         {
             InitializeComponent();
+            Semester s = new Semester("Q2", new DateTime(2020, 04, 27));
+            Course k = new Course("Deutsch Bauschke", new DateTime(2020, 04, 27), Color.Red, new MyNoteBase.Utils.Graphic.Icon("heft", new Bitmap(32, 32), 1), s);
+            Excercise c = new Excercise(new DateTime(2020, 04, 27), "Vormärz", k, new TestIManager(), "AB Vormärz");
+            c.Content.Add(new TextContent());
+
+            new IOManager(new SaveLoader()).SaveCanvas(c);
+
+            c = (Excercise)new IOManager(new SaveLoader()).LoadCanvas("G:\\mynote\\MyNote\\bin\\Debug\\userSaves\\Q2\\Deutsch Bauschke\\Vormärz.myn", new TestIManager());
         }
 
         public void Init()

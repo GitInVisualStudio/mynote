@@ -45,6 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Canvasses\Canvas.cs" />
+    <Compile Include="Canvasses\Content\CanvasContent.cs" />
+    <Compile Include="Canvasses\Content\ImageContent.cs" />
+    <Compile Include="Canvasses\Content\TextChar.cs" />
+    <Compile Include="Canvasses\Content\TextContent.cs" />
     <Compile Include="Canvasses\Excercise.cs" />
     <Compile Include="Canvasses\VocabularyListing.cs" />
     <Compile Include="Canvasses\VocabularyPair.cs" />

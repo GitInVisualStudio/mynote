@@ -1,4 +1,5 @@
-﻿using MyNoteBase.Classes;
+﻿using MyNoteBase.Canvasses.Content;
+using MyNoteBase.Classes;
 using MyNoteBase.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -28,6 +29,7 @@ namespace MyNoteBase.Canvasses
         [JsonConverter(typeof(Utils.IO.ImageConverter))]
         private Image pixels;
         private string type;
+        private List<CanvasContent> content;
 
         public IManager Manager
         {
@@ -85,6 +87,7 @@ namespace MyNoteBase.Canvasses
         public string CourseLocalID { get => courseLocalID; set => courseLocalID = value; }
         public string LocalID { get => localID;  }
         public int OnlineID { get => onlineID; set => onlineID = value; }
+        public List<CanvasContent> Content { get => content; set => content = value; }
 
         public Canvas(JObject json, IManager manager)
         {
@@ -107,6 +110,13 @@ namespace MyNoteBase.Canvasses
             serializer.Converters.Add(new Utils.IO.ImageConverter());
             this.manager.SetImage(json["pixels"].ToObject<Image>(serializer));
             this.type = GetType().Name;
+
+            this.content = new List<CanvasContent>();
+            foreach (JToken item in json["content"])
+            {
+                Type t = item["t"].ToObject<Type>();
+                content.Add((CanvasContent)t.GetConstructor(new Type[] { typeof(JObject) }).Invoke(new object[] { item.ToObject<JObject>() }));
+            }
         }
 
         public Canvas(DateTime dt, string name, Course course, IManager manager)
@@ -121,6 +131,7 @@ namespace MyNoteBase.Canvasses
             this.courseLocalID = course.LocalID;
             this.courseOnlineID = course.OnlineID;
             this.type = GetType().Name;
+            this.content = new List<CanvasContent>();
         }
 
         private string GetLocalID()
